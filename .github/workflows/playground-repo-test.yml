@@ -1,0 +1,17 @@
+name: Dummy Test Workflow
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Print Message
+        run: |
+          echo "This is a dummy test workflow."
+          echo "It ran successfully."
