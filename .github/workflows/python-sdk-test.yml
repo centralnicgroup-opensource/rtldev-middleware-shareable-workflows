@@ -53,8 +53,8 @@ jobs:
       - name: Unit & Coverage Report
         run: "./scripts/coverage.sh"
       - name: Upload htmlcov folder
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: coverage-folder
+          name: coverage-folder-${{ matrix.python-version }}
           path: htmlcov
           retention-days: 1

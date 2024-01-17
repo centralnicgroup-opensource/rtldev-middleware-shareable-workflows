@@ -23,6 +23,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      # JAVA is used for Releasing on MAVEN Central
       - uses: actions/setup-java@v4
         with:
           java-version: ${{ vars.RTLDEV_MW_CI_JAVA_VERSION }}
@@ -33,11 +34,10 @@ jobs:
           node-version: ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
           check-latest: true
           cache: "npm"
-      - name: Download Artifacts
-        uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         id: download
         with:
-          name: coverage
+          name: coverage-report-${{ matrix.java-version }}
       - run: |
           rm -rf target
           unzip -qq -o target.zip
