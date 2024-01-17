@@ -27,30 +27,26 @@ jobs:
   test_matrix:
     name: 🧪 Testing
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
-    needs: lint   
+    needs: lint
     permissions:
       contents: read
     strategy:
       matrix:
-        java-version: ${{ fromJson(vars.RTLDEV_MW_CI_JAVA_MATRIX) }}
+        php-version: ${{ fromJson(vars.RTLDEV_MW_CI_PHP_MATRIX) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Java JDK @^${{ matrix.java-version }}
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ matrix.java-version }}
-          distribution: ${{ vars.RTLDEV_MW_CI_JAVA_DISTRO }}
-      - name: Validate & Coverage Report
+      - name: Install Dependencies::PHP${{ matrix.php-version }}
         run: |
-          mvn -B clean site package
-          zip -r /home/runner/target.zip ./target
-      - uses: actions/upload-artifact@v3
-        id: upload
-        with:
-          name: coverage
-          path: ~/target.zip
-          retention-days: 1
+          echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
+          composer update
+      - name: Code Validation
+        env:
+          TESTS_USER_HEXONET: ${{ secrets.TESTS_USER_HEXONET }}
+          TESTS_USERPASSWORD_HEXONET: ${{ secrets.TESTS_USERPASSWORD_HEXONET }}
+          TESTS_USER_CNR: ${{ secrets.TESTS_USER_CNR }}
+          TESTS_USERPASSWORD_CNR: ${{ secrets.TESTS_USERPASSWORD_CNR }}
+        run: composer run-script test
