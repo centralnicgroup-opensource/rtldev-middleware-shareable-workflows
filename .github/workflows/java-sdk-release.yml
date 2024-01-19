@@ -28,6 +28,8 @@ jobs:
         with:
           java-version: ${{ vars.RTLDEV_MW_CI_JAVA_VERSION }}
           distribution: ${{ vars.RTLDEV_MW_CI_JAVA_DISTRO }}
+          check-latest: true
+          cache: maven
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
