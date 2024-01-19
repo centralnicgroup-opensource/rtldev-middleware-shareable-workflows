@@ -44,6 +44,8 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
           distribution: ${{ vars.RTLDEV_MW_CI_JAVA_DISTRO }}
+      - name: Maven version
+        run: mvn --version
       - name: Validate & Coverage Report
         run: |
           mvn -B clean site package -Pdev
