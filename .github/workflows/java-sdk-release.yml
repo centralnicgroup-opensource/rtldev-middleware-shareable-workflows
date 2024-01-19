@@ -37,7 +37,7 @@ jobs:
       - uses: actions/download-artifact@v4
         id: download
         with:
-          name: coverage-report-${{ matrix.java-version }}
+          name: coverage-report-${{ vars.RTLDEV_MW_CI_JAVA_VERSION }}
       - run: |
           rm -rf target
           unzip -qq -o target.zip
