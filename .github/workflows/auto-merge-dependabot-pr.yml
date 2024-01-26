@@ -56,6 +56,13 @@ jobs:
     permissions:
       contents: read
 
+  gulp-release-notification-plugin-tests:
+    if: ${{ contains(inputs.repository, 'gulp-release-notification-plugin') }}
+    uses: ./.github/workflows/gulp-release-notification-plugin-test.yml
+    secrets: inherit
+    permissions:
+      contents: read      
+
   dependabot:
     if: ${{ github.actor == 'dependabot[bot]' }}
     name: Auto-merge Dependabot PR
@@ -68,6 +75,7 @@ jobs:
       - node-sdk-tests
       - go-sdk-tests
       - blesta-ispapi-tests
+      - gulp-release-notification-plugin-tests
     permissions:
       contents: write
       pull-requests: write

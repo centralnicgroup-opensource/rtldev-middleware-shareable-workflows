@@ -69,3 +69,12 @@ jobs:
             contents: write
             issues: write
             deployments: write
+
+    gulp-release-notification-plugin-release:
+        if: ${{ contains(inputs.repository, 'gulp-release-notification-plugin') }}
+        uses: ./.github/workflows/gulp-release-notification-plugin-release.yml
+        secrets: inherit
+        permissions:
+            contents: write
+            issues: write
+            deployments: write
