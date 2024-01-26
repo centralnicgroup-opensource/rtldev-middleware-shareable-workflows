@@ -1,0 +1,25 @@
+name: Linting
+on:
+  workflow_call:
+
+jobs:
+  test:
+    name: 🧪 Linting
+    runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Super Linter Code Base
+        uses: github/super-linter/slim@v5
+        env:
+          FILTER_REGEX_INCLUDE: "index.js/lib/*"
+          DEFAULT_BRANCH: main
+          VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_ALL_CODEBASE: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
