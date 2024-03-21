@@ -41,6 +41,11 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Install PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: xdebug
       - name: Install Dependencies::PHP${{ matrix.php-version }}
         run: |
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
