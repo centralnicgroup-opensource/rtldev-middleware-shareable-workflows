@@ -63,6 +63,13 @@ jobs:
     permissions:
       contents: read
 
+  php-idna-translator-tests:
+      if: ${{ contains(inputs.repository, 'php-idna-translator') }}
+      uses: ./.github/workflows/php-idna-translator-test.yml
+      secrets: inherit
+      permissions:
+        contents: read
+
   dependabot:
     name: Auto-merge Dependabot PR
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
@@ -74,6 +81,7 @@ jobs:
       - node-sdk-tests
       - go-sdk-tests
       - blesta-ispapi-tests
+      - php-idna-translator-tests
       - gulp-release-notification-plugin-tests
     if: ${{ github.actor == 'dependabot[bot]' && (success() || needs.perl-sdk-tests.result == 'success' || needs.python-sdk-tests.result == 'success' || needs.php-sdk-tests.result == 'success' || needs.java-sdk-tests.result == 'success' || needs.node-sdk-tests.result == 'success' || needs.go-sdk-tests.result == 'success' || needs.blesta-ispapi-tests.result == 'success' || needs.gulp-release-notification-plugin-tests.result == 'success') }}
     permissions:

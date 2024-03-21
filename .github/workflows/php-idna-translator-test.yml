@@ -17,12 +17,11 @@ jobs:
       - name: Super Linter Code Base
         uses: github/super-linter/slim@v5
         env:
-          FILTER_REGEX_INCLUDE: "/src/*|/tests/*|updateVersion.sh"
-          DEFAULT_BRANCH: master
+          FILTER_REGEX_INCLUDE: "/src/*|/tests/*"
+          DEFAULT_BRANCH: main
           VALIDATE_PHP: true
           VALIDATE_PHP_PHPCS: true
           VALIDATE_PHP_PHPSTAN: true
-          VALIDATE_BASH: true
           VALIDATE_ALL_CODEBASE: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -46,9 +45,4 @@ jobs:
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
           composer update
       - name: Code Validation
-        env:
-          TESTS_USER_HEXONET: ${{ secrets.TESTS_USER_HEXONET }}
-          TESTS_USERPASSWORD_HEXONET: ${{ secrets.TESTS_USERPASSWORD_HEXONET }}
-          TESTS_USER_CNR: ${{ secrets.TESTS_USER_CNR }}
-          TESTS_USERPASSWORD_CNR: ${{ secrets.TESTS_USERPASSWORD_CNR }}
         run: composer run-script test
