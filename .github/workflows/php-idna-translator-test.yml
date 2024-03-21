@@ -14,10 +14,6 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Install Dependencies::PHP${{ matrix.php-version }}
-        run: |
-          echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
-          composer update          
       - name: Super Linter Code Base
         uses: github/super-linter/slim@v5
         env:
@@ -44,9 +40,14 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Install PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: xdebug          
       - name: Install Dependencies::PHP${{ matrix.php-version }}
         run: |
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
           composer update
-      - name: Code Validation
-        run: composer run-script test
+      - name: Code Validation & Coverage
+        run: composer run-script coverage
