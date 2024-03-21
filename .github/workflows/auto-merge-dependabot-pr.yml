@@ -81,9 +81,9 @@ jobs:
       - node-sdk-tests
       - go-sdk-tests
       - blesta-ispapi-tests
-      - php-idna-translator-tests
       - gulp-release-notification-plugin-tests
-    if: ${{ github.actor == 'dependabot[bot]' && (success() || needs.perl-sdk-tests.result == 'success' || needs.python-sdk-tests.result == 'success' || needs.php-sdk-tests.result == 'success' || needs.java-sdk-tests.result == 'success' || needs.node-sdk-tests.result == 'success' || needs.go-sdk-tests.result == 'success' || needs.blesta-ispapi-tests.result == 'success' || needs.gulp-release-notification-plugin-tests.result == 'success') }}
+      - php-idna-translator-tests
+    if: ${{ github.actor == 'dependabot[bot]' && (success() || needs.perl-sdk-tests.result == 'success' || needs.python-sdk-tests.result == 'success' || needs.php-sdk-tests.result == 'success' || needs.java-sdk-tests.result == 'success' || needs.node-sdk-tests.result == 'success' || needs.go-sdk-tests.result == 'success' || needs.blesta-ispapi-tests.result == 'success' || needs.gulp-release-notification-plugin-tests.result == 'success' || needs.php-idna-translator-tests.result == 'success') }}
     permissions:
       contents: write
       pull-requests: write
