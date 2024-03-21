@@ -78,3 +78,12 @@ jobs:
             contents: write
             issues: write
             deployments: write
+
+    php-idna-translator-release:
+        if: ${{ contains(inputs.repository, 'php-idna-translator') }}
+        uses: ./.github/workflows/php-idna-translator-release.yml
+        secrets: inherit
+        permissions:
+            contents: write
+            issues: write
+            deployments: write
