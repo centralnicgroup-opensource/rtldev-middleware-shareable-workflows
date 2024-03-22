@@ -50,10 +50,16 @@ jobs:
         run: |
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
           composer update
-      - name: Code Validation
+      - name: Code Validation & Coverage
         env:
           TESTS_USER_HEXONET: ${{ secrets.TESTS_USER_HEXONET }}
           TESTS_USERPASSWORD_HEXONET: ${{ secrets.TESTS_USERPASSWORD_HEXONET }}
           TESTS_USER_CNR: ${{ secrets.TESTS_USER_CNR }}
           TESTS_USERPASSWORD_CNR: ${{ secrets.TESTS_USERPASSWORD_CNR }}
         run: composer run-script test
+      - name: Upload coverage report folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-folder-${{ matrix.php-version }}
+          path: reports
+          retention-days: 1
