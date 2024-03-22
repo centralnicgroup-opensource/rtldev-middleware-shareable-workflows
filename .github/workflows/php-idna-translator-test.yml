@@ -51,3 +51,9 @@ jobs:
           composer update
       - name: Code Validation & Coverage
         run: composer run-script coverage
+      - name: Upload coverage report folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-folder-${{ matrix.php-version }}
+          path: reports
+          retention-days: 1        
