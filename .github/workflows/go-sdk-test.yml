@@ -16,7 +16,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-go@v5
         with:
-          go-version: '${{ vars.RTLDEV_MW_CI_GOLANG_VERSION }}'
+          go-version: "${{ vars.RTLDEV_MW_CI_GOLANG_VERSION }}"
           check-latest: true
       - name: Super Linter Code Base
         uses: github/super-linter/slim@v5
@@ -52,4 +52,4 @@ jobs:
       - name: Run build
         run: go build .
       - name: Run test
-        run: ./scripts/test-go.sh  
+        run: ./scripts/test-go.sh

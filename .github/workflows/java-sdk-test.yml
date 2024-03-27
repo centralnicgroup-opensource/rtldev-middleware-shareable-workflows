@@ -27,7 +27,7 @@ jobs:
   test_matrix:
     name: 🧪 Testing
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
-    needs: lint   
+    needs: lint
     permissions:
       contents: read
     strategy:

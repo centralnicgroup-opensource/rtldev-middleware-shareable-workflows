@@ -64,18 +64,18 @@ jobs:
       contents: read
 
   php-idna-translator-tests:
-      if: ${{ contains(inputs.repository, 'php-idna-translator') }}
-      uses: ./.github/workflows/php-idna-translator-test.yml
-      secrets: inherit
-      permissions:
-        contents: read
+    if: ${{ contains(inputs.repository, 'php-idna-translator') }}
+    uses: ./.github/workflows/php-idna-translator-test.yml
+    secrets: inherit
+    permissions:
+      contents: read
 
   semantic-release-replace-tests:
-      if: ${{ contains(inputs.repository, 'semantic-release-replace') }}
-      uses: ./.github/workflows/semantic-release-replace-test.yml
-      secrets: inherit
-      permissions:
-        contents: read
+    if: ${{ contains(inputs.repository, 'semantic-release-replace') }}
+    uses: ./.github/workflows/semantic-release-replace-test.yml
+    secrets: inherit
+    permissions:
+      contents: read
 
   dependabot:
     name: Auto-merge Dependabot PR

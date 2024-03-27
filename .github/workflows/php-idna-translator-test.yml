@@ -17,7 +17,7 @@ jobs:
       - name: Install Dependencies::PHP${{ vars.RTLDEV_MW_CI_PHP_VERSION }}
         run: |
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
-          composer update          
+          composer update
       - name: Super Linter Code Base
         uses: github/super-linter/slim@v5
         env:
@@ -48,7 +48,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          coverage: xdebug          
+          coverage: xdebug
       - name: Install Dependencies::PHP${{ matrix.php-version }}
         run: |
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
@@ -60,4 +60,4 @@ jobs:
         with:
           name: coverage-folder-${{ matrix.php-version }}
           path: reports
-          retention-days: 1        
+          retention-days: 1

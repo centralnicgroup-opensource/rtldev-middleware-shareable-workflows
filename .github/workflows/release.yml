@@ -1,10 +1,10 @@
 name: Release
 on:
-  workflow_call:
-    inputs:
-      repository:
-        required: true
-        type: string
+    workflow_call:
+        inputs:
+            repository:
+                required: true
+                type: string
 
 jobs:
     perl-sdk-release:
