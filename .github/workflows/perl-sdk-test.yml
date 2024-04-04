@@ -3,7 +3,7 @@ on:
   workflow_call:
 
 jobs:
-  test:
+  lint:
     name: 🧪 Linting
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
     permissions:
@@ -31,7 +31,7 @@ jobs:
 
   test_matrix:
     name: 🧪 Testing
-    needs: test
+    needs: lint
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
     permissions:
       contents: read
@@ -52,3 +52,14 @@ jobs:
         run: |
           cpm install -g --no-test --show-build-log-on-failure --cpanfile cpanfile
           ./scripts/coverage.sh
+
+  dependabot:
+    needs:
+      - test_matrix
+      - lint
+    if: ${{ github.actor == 'dependabot[bot]' && (success() || needs.lint.result == 'success' || needs.test_matrix.result == 'success') }}
+    uses: ./.github/workflows/auto-merge-dependabot-pr.yml
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: write

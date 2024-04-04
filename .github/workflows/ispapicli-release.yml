@@ -1,0 +1,198 @@
+name: Release
+on:
+  workflow_call:
+
+env:
+  PYTHON_MIN_VERSION: ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
+
+jobs:
+  tests:
+    uses: ./.github/workflows/ispapicli-test.yml
+    secrets: inherit
+    permissions:
+      contents: read
+
+  generate-linux-bin:
+    permissions:
+      contents: write
+      deployments: write
+    name: Generate Linux bin
+    needs: tests
+    runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Number of commits to fetch. 0 indicates all history for all branches and tags.
+      - name: Checkout python
+        uses: actions/setup-python@v5
+        with:
+          check-latest: true
+          python-version: ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
+      - name: Install python dependencies
+        run: |
+          pip install --upgrade pip
+          pip -V
+          pip install --upgrade -e .
+      - name: Setup NodeJS LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "${{ vars.RTLDEV_MW_CI_NODE_VERSION }}"
+          check-latest: true
+          cache: npm
+      - name: Install NodeJS dependencies
+        run: npm ci
+      - name: Release - version update only
+        run: |
+          echo "{\"plugins\": [\"@semantic-release/commit-analyzer\", [\"@semantic-release/exec\", { \"verifyReleaseCmd\": \"./updateVersion.sh \${nextRelease.version}\" }]]}" > .releaserc.json
+          cat .releaserc.json
+          npx semantic-release --dry-run
+      - name: Run Pyinstaller
+        run: |
+          "./scripts/linux-pyinstaller.sh"
+      - name: Upload linux-binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-binary
+          path: linux-binary-latest.zip
+          retention-days: 1
+  generate-macos-bin:
+    name: Generate MacOS bin
+    runs-on: macos-latest
+    needs: tests
+    permissions:
+      contents: write
+      deployments: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Number of commits to fetch. 0 indicates all history for all branches and tags.
+      - name: Checkout python
+        uses: actions/setup-python@v5
+        with:
+          check-latest: true
+          python-version: ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip -V
+          pip install --upgrade -e .
+      - name: Setup NodeJS LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "${{ vars.RTLDEV_MW_CI_NODE_VERSION }}"
+          check-latest: true
+          cache: npm
+      - name: Install NodeJS dependencies
+        run: npm ci
+      - name: Release - version update only
+        run: |
+          echo "{\"plugins\": [\"@semantic-release/commit-analyzer\", [\"@semantic-release/exec\", { \"verifyReleaseCmd\": \"./updateVersionMacOS.sh \${nextRelease.version}\" }]]}" > .releaserc.json
+          cat .releaserc.json
+          npx semantic-release --dry-run
+      - name: Run Pyinstaller
+        run: |
+          "./scripts/macos-pyinstaller.sh"
+      - name: Upload macos-binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-binary
+          path: macos-binary-latest.zip
+          retention-days: 1
+
+  generate-win-bin:
+    name: Generate Win bin
+    runs-on: windows-latest
+    needs: tests
+    permissions:
+      contents: write
+      deployments: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Number of commits to fetch. 0 indicates all history for all branches and tags.
+      - name: Checkout python
+        uses: actions/setup-python@v5
+        with:
+          check-latest: true
+          python-version: ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
+      - name: Install python dependencies
+        run: |
+          pip install --upgrade pip
+          pip -V
+          pip install --upgrade -e .
+      - name: Setup NodeJS LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "${{ vars.RTLDEV_MW_CI_NODE_VERSION }}"
+          check-latest: true
+          cache: npm
+      - name: Install NodeJS dependencies
+        run: npm ci
+      - name: Release - version update only
+        run: |
+          echo '{"plugins": ["@semantic-release/commit-analyzer", ["@semantic-release/exec", { "verifyReleaseCmd": "Bash updateVersion.sh ${nextRelease.version}" }]]}' > '.releaserc.json'
+          cat .releaserc.json
+          npx semantic-release --dry-run
+      - name: Run Pyinstaller
+        run: |
+          & "./scripts/win-pyinstaller.ps1"
+      - name: Upload win-binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: win-binary
+          path: win-binary-latest.zip
+          retention-days: 1
+
+  release:
+    name: Release Job
+    runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
+    needs:
+      - generate-linux-bin
+      - generate-macos-bin
+      - generate-win-bin
+    permissions:
+      contents: write
+      issues: write
+      deployments: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Number of commits to fetch. 0 indicates all history for all branches and tags.
+          persist-credentials: false
+      - name: Checkout python
+        uses: actions/setup-python@v5
+        with:
+          check-latest: true
+          python-version: ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip testresources setuptools wheel
+          pip -V
+          pip install --upgrade -e .
+      - name: Setup NodeJS LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "${{ vars.RTLDEV_MW_CI_NODE_VERSION }}"
+          check-latest: true
+          cache: npm
+      - name: Install dependencies
+        run: |
+          npm ci
+          gulp validate
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: npx semantic-release

@@ -3,7 +3,7 @@ on:
   workflow_call:
 
 jobs:
-  test:
+  lint:
     name: 🧪 Linting
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
     permissions:
@@ -29,7 +29,7 @@ jobs:
         python-version: ${{ fromJson(vars.RTLDEV_MW_CI_PYTHON_MATRIX) }}
 
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
-    needs: test
+    needs: lint
     name: 🧪 Testing
     permissions:
       contents: read
@@ -58,3 +58,14 @@ jobs:
           name: coverage-folder-${{ matrix.python-version }}
           path: htmlcov
           retention-days: 1
+
+  dependabot:
+    needs:
+      - test_matrix
+      - lint
+    if: ${{ github.actor == 'dependabot[bot]' && (success() || needs.lint.result == 'success' || needs.test_matrix.result == 'success') }}
+    uses: ./.github/workflows/auto-merge-dependabot-pr.yml
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: write

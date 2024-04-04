@@ -1,97 +1,12 @@
 name: Dependabot auto-merge
 on:
   workflow_call:
-    inputs:
-      repository:
-        required: true
-        type: string
 
 jobs:
-  perl-sdk-tests:
-    if: ${{ contains(inputs.repository, 'perl-sdk') }}
-    uses: ./.github/workflows/perl-sdk-test.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
-  python-sdk-tests:
-    if: ${{ contains(inputs.repository, 'python-sdk') }}
-    uses: ./.github/workflows/python-sdk-test.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
-  php-sdk-tests:
-    if: ${{ contains(inputs.repository, 'php-sdk') }}
-    uses: ./.github/workflows/php-sdk-test.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
-  java-sdk-tests:
-    if: ${{ contains(inputs.repository, 'java-sdk') }}
-    uses: ./.github/workflows/java-sdk-test.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
-  node-sdk-tests:
-    if: ${{ contains(inputs.repository, 'node-sdk') }}
-    uses: ./.github/workflows/node-sdk-test.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
-  go-sdk-tests:
-    if: ${{ contains(inputs.repository, 'go-sdk') }}
-    uses: ./.github/workflows/go-sdk-test.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
-  blesta-ispapi-tests:
-    if: ${{ contains(inputs.repository, 'blesta-ispapi') }}
-    uses: ./.github/workflows/blesta-ispapi-test.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
-  gulp-release-notification-plugin-tests:
-    if: ${{ contains(inputs.repository, 'gulp-release-notification-plugin') }}
-    uses: ./.github/workflows/gulp-release-notification-plugin-test.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
-  php-idna-translator-tests:
-    if: ${{ contains(inputs.repository, 'php-idna-translator') }}
-    uses: ./.github/workflows/php-idna-translator-test.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
-  semantic-release-replace-tests:
-    if: ${{ contains(inputs.repository, 'semantic-release-replace') }}
-    uses: ./.github/workflows/semantic-release-replace-test.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
   dependabot:
     name: Auto-merge Dependabot PR
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
-    needs:
-      - perl-sdk-tests
-      - python-sdk-tests
-      - php-sdk-tests
-      - java-sdk-tests
-      - node-sdk-tests
-      - go-sdk-tests
-      - blesta-ispapi-tests
-      - gulp-release-notification-plugin-tests
-      - php-idna-translator-tests
-      - semantic-release-replace-tests
-    if: ${{ github.actor == 'dependabot[bot]' && (success() || needs.perl-sdk-tests.result == 'success' || needs.python-sdk-tests.result == 'success' || needs.php-sdk-tests.result == 'success' || needs.java-sdk-tests.result == 'success' || needs.node-sdk-tests.result == 'success' || needs.go-sdk-tests.result == 'success' || needs.blesta-ispapi-tests.result == 'success' || needs.gulp-release-notification-plugin-tests.result == 'success' || needs.php-idna-translator-tests.result == 'success' || needs.semantic-release-replace-tests.result == 'success') }}
+    if: ${{ github.actor == 'dependabot[bot]' }}
     permissions:
       contents: write
       pull-requests: write
