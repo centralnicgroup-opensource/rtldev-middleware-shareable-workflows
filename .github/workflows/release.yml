@@ -7,59 +7,11 @@ on:
                 type: string
 
 jobs:
-    perl-sdk-release:
-        if: ${{ contains(inputs.repository, 'perl-sdk') }}
-        uses: ./.github/workflows/perl-sdk-release.yml
-        secrets: inherit
-        permissions:
-            contents: write
-            issues: write
-            deployments: write
-
-    python-sdk-release:
-        if: ${{ contains(inputs.repository, 'python-sdk') }}
-        uses: ./.github/workflows/python-sdk-release.yml
-        secrets: inherit
-        permissions:
-            contents: write
-            issues: write
-            deployments: write
-
-    php-sdk-release:
-        if: ${{ contains(inputs.repository, 'php-sdk') }}
-        uses: ./.github/workflows/php-sdk-release.yml
-        secrets: inherit
-        permissions:
-            contents: write
-            issues: write
-            deployments: write
-
-    java-sdk-release:
-        if: ${{ contains(inputs.repository, 'java-sdk') }}
-        uses: ./.github/workflows/java-sdk-release.yml
-        secrets: inherit
-        permissions:
-            contents: write
-            issues: write
-            deployments: write
-
-    node-sdk-release:
-        if: ${{ contains(inputs.repository, 'node-sdk') }}
-        uses: ./.github/workflows/node-sdk-release.yml
-        secrets: inherit
-        permissions:
-            contents: write
-            issues: write
-            deployments: write
-
-    go-sdk-release:
-        if: ${{ contains(inputs.repository, 'go-sdk') }}
-        uses: ./.github/workflows/go-sdk-release.yml
-        secrets: inherit
-        permissions:
-            contents: write
-            issues: write
-            deployments: write
+    sdks-release:
+        if: ${{ contains(inputs.repository, '-sdk') }}
+        uses: ./.github/workflows/release-sdks.yml
+        with:
+            repository: ${{ inputs.repository }}
 
     blesta-ispapi-release:
         if: ${{ contains(inputs.repository, 'blesta-ispapi') }}
