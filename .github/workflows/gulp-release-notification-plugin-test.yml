@@ -3,7 +3,7 @@ on:
   workflow_call:
 
 jobs:
-  test:
+  lint:
     name: 🧪 Linting
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
     permissions:
@@ -23,3 +23,12 @@ jobs:
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_ALL_CODEBASE: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  dependabot:
+    needs: lint
+    if: ${{ github.actor == 'dependabot[bot]' && (success() || needs.lint.result == 'success') }}
+    uses: ./.github/workflows/auto-merge-dependabot-pr.yml
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: write
