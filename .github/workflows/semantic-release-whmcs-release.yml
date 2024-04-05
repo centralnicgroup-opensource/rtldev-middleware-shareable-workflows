@@ -6,9 +6,7 @@ jobs:
   tests:
     uses: ./.github/workflows/semantic-release-whmcs-test.yml
     secrets: inherit
-    permissions:
-      contents: read
-
+    
   release:
     name: Release
     needs: tests

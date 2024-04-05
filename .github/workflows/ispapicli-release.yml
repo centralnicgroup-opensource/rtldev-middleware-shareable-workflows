@@ -9,8 +9,6 @@ jobs:
   tests:
     uses: ./.github/workflows/ispapicli-test.yml
     secrets: inherit
-    permissions:
-      contents: read
 
   generate-linux-bin:
     permissions:

@@ -6,8 +6,6 @@ jobs:
   tests:
     uses: ./.github/workflows/perl-sdk-test.yml
     secrets: inherit
-    permissions:
-      contents: read
 
   release:
     name: Release @ ${{ vars.RTLDEV_MW_CI_OS }}
