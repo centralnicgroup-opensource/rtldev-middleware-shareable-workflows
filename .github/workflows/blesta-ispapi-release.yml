@@ -6,8 +6,6 @@ jobs:
   tests:
     uses: ./.github/workflows/blesta-ispapi-test.yml
     secrets: inherit
-    permissions:
-      contents: read
 
   release:
     name: Release Job
