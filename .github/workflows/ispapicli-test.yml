@@ -20,13 +20,13 @@ jobs:
           python-version: ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
+          pip install --upgrade pip setuptools
           pip -V
           pip install --upgrade -e .
       - name: Python version
         run: |
           echo "Python version: "
-          echo ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }} | sed 's/./&‎/g'
+          echo ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
       - name: Super Linter Code Base
         uses: github/super-linter/slim@v5
         env:
