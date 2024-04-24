@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Super Linter Code Base
-        uses: github/super-linter/slim@v5
+        uses: github/super-linter/slim@v6
         env:
           FILTER_REGEX_INCLUDE: "/components/*|updateVersion.sh"
           VALIDATE_PHP: true

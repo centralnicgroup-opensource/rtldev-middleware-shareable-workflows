@@ -28,7 +28,7 @@ jobs:
           echo "Python version: "
           echo ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
       - name: Super Linter Code Base
-        uses: github/super-linter/slim@v5
+        uses: github/super-linter/slim@v6
         env:
           FILTER_REGEX_INCLUDE: "/hexonet/*|/scripts/*|updateVersion*.sh|setup.py"
           DEFAULT_BRANCH: master
