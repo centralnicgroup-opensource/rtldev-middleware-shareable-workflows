@@ -21,7 +21,8 @@ jobs:
       - name: Super Linter Code Base
         uses: github/super-linter/slim@v6
         env:
-          FILTER_REGEX_INCLUDE: "/*|/scripts/*|updateVersion.sh|apiclient.go"
+          FILTER_REGEX_INCLUDE: "/*|/scripts/*|updateVersion.sh|**/*.go"
+          FILTER_REGEX_EXCLUDE: "**/*_test.go"
           DEFAULT_BRANCH: master
           VALIDATE_GO: true
           VALIDATE_BASH: true
