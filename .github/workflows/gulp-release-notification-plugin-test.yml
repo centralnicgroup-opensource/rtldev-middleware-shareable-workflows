@@ -18,7 +18,7 @@ jobs:
       - name: Super Linter Code Base
         uses: github/super-linter/slim@v6
         env:
-          FILTER_REGEX_INCLUDE: "index.js/lib/*"
+          FILTER_REGEX_INCLUDE: "index.js|lib/*"
           DEFAULT_BRANCH: main
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_ALL_CODEBASE: false
