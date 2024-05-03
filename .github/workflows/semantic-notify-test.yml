@@ -1,0 +1,66 @@
+name: Linting
+on:
+  workflow_call:
+
+jobs:
+  lint:
+    name: 🧪 Linting
+    runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Super Linter Code Base
+        uses: github/super-linter/slim@v6
+        env:
+          FILTER_REGEX_INCLUDE: "index.js|lib/*"
+          DEFAULT_BRANCH: main
+          VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_ALL_CODEBASE: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test_matrix:
+    strategy:
+      matrix:
+        node-version: ${{ fromJson(vars.RTLDEV_MW_CI_NODE_MATRIX) }}
+
+    name: 🧪 Testing
+    runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
+    needs: lint
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - name: Build & Validation
+        env:
+          TEAMS_NOTIFICATION_URI: ${{ secrets.TEST_TEAMS_NOTIFICATION_URI }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          npm ci
+          npm run test
+
+  dependabot:
+    needs:
+      - test_matrix
+      - lint
+    if: ${{ github.actor == 'dependabot[bot]' && (success() || needs.lint.result == 'success' || needs.test_matrix.result == 'success') }}
+    uses: ./.github/workflows/auto-merge-dependabot-pr.yml
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: write
