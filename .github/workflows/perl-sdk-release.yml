@@ -52,6 +52,5 @@ jobs:
           CPAN_PASSWORD: ${{ secrets.CPAN_PASSWORD }}
           TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
           COMMIT_SHA: ${{ github.sha }}
-          npm_package_name: perl-sdk
         # we are root as of perl-tester image, npx won't invoke with root rights
         run: ./node_modules/.bin/semantic-release

@@ -32,7 +32,6 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
           COMMIT_SHA: ${{ github.sha }}
         run: npx semantic-release
