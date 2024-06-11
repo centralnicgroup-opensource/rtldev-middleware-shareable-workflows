@@ -1,0 +1,12 @@
+name: Linting & Coverage
+on:
+  workflow_call:
+
+jobs:
+  dependabot:
+    if: ${{ github.actor == 'dependabot[bot]' && success() }}
+    uses: ./.github/workflows/auto-merge-dependabot-pr.yml
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: write
