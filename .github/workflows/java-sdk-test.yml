@@ -47,16 +47,20 @@ jobs:
       - name: Maven version
         run: mvn --version
       - name: Validate & Coverage Report
+        env:
+          CNR_TEST_USER: ${{ secrets.RTLDEV_MW_CI_USER_CNR }}
+          CNR_TEST_PASSWORD: ${{ secrets.RTLDEV_MW_CI_USERPASSWORD_CNR }}
         run: |
           mvn -B clean site package -Pdev
-          zip -r /home/runner/target.zip ./target
+          zip -r /home/runner/t
+          arget.zip ./target
       - uses: actions/upload-artifact@v4
         id: upload
         with:
           name: coverage-report-${{ matrix.java-version }}
           path: ~/target.zip
           retention-days: 1
-
+          
   dependabot:
     needs:
       - test_matrix
