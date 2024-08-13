@@ -51,8 +51,13 @@ jobs:
           check-latest: true
       - name: Run build
         run: go build .
-      - name: Run test
-        run: ./scripts/test-go.sh
+      - name: Running automated tests
+        env:
+          CNR_TEST_USER: ${{ secrets.CNR_TEST_USER }}
+          CNR_TEST_PASSWORD: ${{ secrets.CNR_TEST_PASSWORD }}
+        run: |
+          go test -v -race -coverprofile=coverage.out ./...
+          go tool cover -html=coverage.out -o coverage.html
 
   dependabot:
     needs:
