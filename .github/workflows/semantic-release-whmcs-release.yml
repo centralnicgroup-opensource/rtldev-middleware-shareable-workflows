@@ -36,4 +36,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
           COMMIT_SHA: ${{ github.sha }}
+          PUPPETEER_CHROME_SKIP_DOWNLOAD: 'false'
+          PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'false'
+          PUPPETEER_FIREFOX_SKIP_DOWNLOAD: 'true'
         run: npx semantic-release
