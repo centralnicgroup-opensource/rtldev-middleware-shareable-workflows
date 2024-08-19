@@ -32,6 +32,9 @@ jobs:
           WHMCSMP_PASSWORD: ${{ secrets.WHMCSMP_PASSWORD }}
           WHMCSMP_PRODUCTID: ${{ vars.WHMCSMP_PRODUCTID }}
           WHMCSMP_MINVERSION: ${{ vars.WHMCSMP_MINVERSION }}
+          PUPPETEER_CHROME_SKIP_DOWNLOAD: 'false'
+          PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'false'
+          PUPPETEER_FIREFOX_SKIP_DOWNLOAD: 'true'
           DEBUG: ${{ vars.DEBUG }}
         run: npm run test
 
