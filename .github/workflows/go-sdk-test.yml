@@ -19,7 +19,7 @@ jobs:
           go-version: "${{ vars.RTLDEV_MW_CI_GOLANG_VERSION }}"
           check-latest: true
       - name: Super Linter Code Base
-        uses: github/super-linter/slim@v6
+        uses: github/super-linter/slim@v7
         env:
           FILTER_REGEX_EXCLUDE: "**/*_test.go"
           DEFAULT_BRANCH: master

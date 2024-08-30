@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Super Linter Code Base
-        uses: github/super-linter/slim@v6
+        uses: github/super-linter/slim@v7
         env:
           FILTER_REGEX_INCLUDE: "/hexonet/*|/scripts/*|updateVersion.sh|setup.py"
           VALIDATE_PYTHON_BLACK: true
