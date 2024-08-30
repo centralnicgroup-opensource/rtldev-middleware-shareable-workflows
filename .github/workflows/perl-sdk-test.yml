@@ -20,7 +20,7 @@ jobs:
       - name: APT Packages
         run: apt install -y perl-doc ctags perltidy
       - name: Super Linter Code Base
-        uses: github/super-linter/slim@v6
+        uses: github/super-linter/slim@v7
         env:
           FILTER_REGEX_INCLUDE: "/lib/*|/t/*|/scripts/.*.sh|updateVersion.sh"
           DEFAULT_BRANCH: master
