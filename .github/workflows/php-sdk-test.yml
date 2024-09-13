@@ -63,12 +63,6 @@ jobs:
           TESTS_ROLE_CNR: ${{ secrets.TESTS_ROLE_CNR }}
           TESTS_ROLEPASSWORD_CNR: ${{ secrets.TESTS_ROLEPASSWORD_CNR }}
         run: composer run-script test
-      - name: Upload coverage report folder
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-folder-${{ matrix.php-version }}
-          path: reports
-          retention-days: 1
 
   dependabot:
     needs:
