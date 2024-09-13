@@ -39,12 +39,6 @@ jobs:
           composer update --no-dev
       - name: PHP Class Documentation
         run: composer run-script docs
-      - name: Download coverage report folder from previous workflow
-        uses: actions/download-artifact@v4
-        with:
-          pattern: coverage-folder-*
-          merge-multiple: true
-          path: reports
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
