@@ -51,6 +51,9 @@ jobs:
           pip -V
           pip install --upgrade -e .
       - name: Unit & Coverage Report
+        env:
+          CNR_TEST_USER: ${{ secrets.TESTS_USER_CNR }}
+          CNR_TEST_PASSWORD: ${{ secrets.TESTS_USERPASSWORD_CNR }}
         run: "./scripts/coverage.sh"
       - name: Upload htmlcov folder
         uses: actions/upload-artifact@v4
