@@ -53,8 +53,8 @@ jobs:
         run: go build .
       - name: Running automated tests
         env:
-          CNR_TEST_USER: ${{ secrets.CNR_TEST_USER }}
-          CNR_TEST_PASSWORD: ${{ secrets.CNR_TEST_PASSWORD }}
+          CNR_TEST_USER: ${{ secrets.TESTS_USER_CNR }}
+          CNR_TEST_PASSWORD: ${{ secrets.TESTS_USERPASSWORD_CNR }}
         run: |
           go test -v -race -coverprofile=coverage.out ./...
           go tool cover -html=coverage.out -o coverage.html
