@@ -51,7 +51,7 @@ jobs:
 
   blesta-ispapi-tests:
     if: ${{ contains(inputs.repository, 'blesta-ispapi') }}
-    uses: ./.github/workflows/blesta-ispapi-test.yml
+    uses: ./.github/workflows/middleware-blesta-test.yml
     secrets: inherit
     permissions:
       contents: read
