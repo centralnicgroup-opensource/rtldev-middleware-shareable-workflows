@@ -4,7 +4,7 @@ on:
 
 jobs:
   tests:
-    uses: ./.github/workflows/blesta-ispapi-test.yml
+    uses: ./.github/workflows/middleware-blesta-test.yml
     secrets: inherit
 
   release:
