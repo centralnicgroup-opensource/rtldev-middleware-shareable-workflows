@@ -46,6 +46,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - name: Build & Validation
+        env:
+          CNR_TEST_USER: ${{ secrets.RTLDEV_MW_CI_USER_CNR }}
+          CNR_TEST_PASSWORD: ${{ secrets.RTLDEV_MW_CI_USERPASSWORD_CNR }}      
         run: |
           npm ci
           npm run lint
