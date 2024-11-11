@@ -46,9 +46,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
           check-latest: true
       - name: Run build
-        run: go build ./..
-      - name: Run vet
-        run: go vet ./...
+        run: go build ./... && go vet ./...
       - name: Running automated tests
         env:
           CNR_TEST_USER: ${{ secrets.RTLDEV_MW_CI_USER_CNR }}
