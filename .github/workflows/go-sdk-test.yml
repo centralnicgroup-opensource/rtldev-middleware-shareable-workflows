@@ -27,10 +27,6 @@ jobs:
           VALIDATE_BASH: true
           VALIDATE_ALL_CODEBASE: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run build
-        run: go build ./...
-      - name: Run vet
-        run: go vet ./...
 
   test_matrix:
     name: 🧪 Testing
@@ -50,7 +46,9 @@ jobs:
           go-version: ${{ matrix.go-version }}
           check-latest: true
       - name: Run build
-        run: go build .
+        run: go build ./..
+      - name: Run vet
+        run: go vet ./...
       - name: Running automated tests
         env:
           CNR_TEST_USER: ${{ secrets.RTLDEV_MW_CI_USER_CNR }}
