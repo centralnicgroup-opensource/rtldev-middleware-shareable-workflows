@@ -62,36 +62,39 @@ jobs:
           path: htmlcov
           retention-days: 1
 
- test_release:
-    runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
-    needs: lint
-    name: 🧪 Testing
-    permissions:
-      contents: read
+  test_release:
+      runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
+      needs: 
+      - lint
+      - test_matrix
+      name: 🧪 Testing
+      permissions:
+        contents: read
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Python @ ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
-        uses: actions/setup-python@v5
-        with:
-          check-latest: true
-          python-version: ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip -V
-          pip install --upgrade -e .
-      - name: Test Release
-        env:
-          TWINE_USERNAME: ${{ secrets.TWINE_TEST_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.TWINE_TEST_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}        
-        run: |
-          ./scripts/createdistribution.sh && ./scripts/uploaddistribution_test.sh 
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+            persist-credentials: false
+        - name: Python @ ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
+          uses: actions/setup-python@v5
+          with:
+            check-latest: true
+            python-version: ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
+        - name: Install dependencies
+          run: |
+            pip install --upgrade pip
+            pip -V
+            pip install --upgrade -e .
+        - name: Test Release
+          env:
+            TWINE_USERNAME: ${{ secrets.TWINE_TEST_USERNAME }}
+            TWINE_PASSWORD: ${{ secrets.TWINE_TEST_PASSWORD }}
+            GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}        
+          run: |
+            ./scripts/createdistribution.sh && ./scripts/uploaddistribution_test.sh
+
   dependabot:
     needs:
       - test_matrix
