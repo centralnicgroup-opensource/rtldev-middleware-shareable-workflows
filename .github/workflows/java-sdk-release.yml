@@ -50,8 +50,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
           MAVEN_OPTS: ${{ vars.MAVEN_OPTS }}
-          CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           ENCRYPTED_C9F9AEDF26B7_KEY: ${{ secrets.ENCRYPTED_C9F9AEDF26B7_KEY }}
           ENCRYPTED_C9F9AEDF26B7_IV: ${{ secrets.ENCRYPTED_C9F9AEDF26B7_IV }}
           GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
