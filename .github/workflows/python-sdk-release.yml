@@ -48,8 +48,10 @@ jobs:
           path: htmlcov
       - name: Release
         env:
-          TWINE_USERNAME: ${{ secrets.TWINE_LIVE_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.TWINE_LIVE_PASSWORD }}
+          TWINE_LIVE_USERNAME: ${{ secrets.TWINE_LIVE_USERNAME }}
+          TWINE_LIVE_PASSWORD: ${{ secrets.TWINE_LIVE_PASSWORD }}
+          TWINE_TEST_USERNAME: ${{ secrets.TWINE_TEST_USERNAME }}
+          TWINE_TEST_PASSWORD: ${{ secrets.TWINE_TEST_PASSWORD }}
           TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
           COMMIT_SHA: ${{ github.sha }}
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
