@@ -89,7 +89,7 @@ jobs:
       - name: Test Release
         env:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
-          MAVEN_OPTS: ${{ vars.MAVEN_OPTS }} -Pdev
+          MAVEN_OPTS: ${{ vars.MAVEN_OPTS }}
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           ENCRYPTED_C9F9AEDF26B7_KEY: ${{ secrets.ENCRYPTED_C9F9AEDF26B7_KEY }}
