@@ -2,7 +2,7 @@ name: Linting & Coverage
 on:
   workflow_call:
 
-jobs:
+# jobs:
   # lint:
   #   name: 🧪 Linting
   #   runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
@@ -60,6 +60,7 @@ jobs:
   #         path: ~/target.zip
   #         retention-days: 1
 
+jobs:
   test_release:
     runs-on: ubuntu-latest
     steps:
@@ -72,7 +73,7 @@ jobs:
           ENCRYPTED_C9F9AEDF26B7_KEY: ${{ secrets.ENCRYPTED_C9F9AEDF26B7_KEY }}
           ENCRYPTED_C9F9AEDF26B7_IV: ${{ secrets.ENCRYPTED_C9F9AEDF26B7_IV }}
           CNR_TEST_USER: ${{ secrets.RTLDEV_MW_CI_USER_CNR }}
-          CNR_TEST_PASSWORD: ${{ secrets.RTLDEV_MW_CI_USERPASSWORD_CNR }}          
+          CNR_TEST_PASSWORD: ${{ secrets.RTLDEV_MW_CI_USERPASSWORD_CNR }}
           GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
@@ -81,8 +82,7 @@ jobs:
           openssl aes-256-cbc -K "$ENCRYPTED_C9F9AEDF26B7_KEY" -iv "$ENCRYPTED_C9F9AEDF26B7_IV" -in codesigning.asc.enc -out codesigning.asc -d
           gpg --import --batch codesigning.asc
           mvn -B clean site package
-          mvn -B deploy -DskipTests      
-
+          mvn -B deploy -DskipTests
 
   dependabot:
     needs:
