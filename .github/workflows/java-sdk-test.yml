@@ -84,13 +84,13 @@ jobs:
           mvn -B clean site package
           mvn -B deploy -DskipTests
 
-  dependabot:
-    needs:
-      - test_matrix
-      - lint
-    if: ${{ github.actor == 'dependabot[bot]' && (success() || needs.lint.result == 'success' || needs.test_matrix.result == 'success') }}
-    uses: ./.github/workflows/auto-merge-dependabot-pr.yml
-    secrets: inherit
-    permissions:
-      contents: write
-      pull-requests: write
+  # dependabot:
+  #   needs:
+  #     - test_matrix
+  #     - lint
+  #   if: ${{ github.actor == 'dependabot[bot]' && (success() || needs.lint.result == 'success' || needs.test_matrix.result == 'success') }}
+  #   uses: ./.github/workflows/auto-merge-dependabot-pr.yml
+  #   secrets: inherit
+  #   permissions:
+  #     contents: write
+  #     pull-requests: write
