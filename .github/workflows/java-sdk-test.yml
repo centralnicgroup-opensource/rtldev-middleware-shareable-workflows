@@ -79,6 +79,7 @@ jobs:
           TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
           COMMIT_SHA: ${{ github.sha }}
         run: |
+          ls -la
           openssl aes-256-cbc -K "$ENCRYPTED_C9F9AEDF26B7_KEY" -iv "$ENCRYPTED_C9F9AEDF26B7_IV" -in codesigning.asc.enc -out codesigning.asc -d
           gpg --import --batch codesigning.asc
           npx semantic-release
