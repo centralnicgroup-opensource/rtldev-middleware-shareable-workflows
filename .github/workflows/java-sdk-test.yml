@@ -67,7 +67,7 @@ jobs:
       - name: Test Release
         env:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
-          MAVEN_OPTS: ${{ vars.MAVEN_OPTS }}
+          MAVEN_OPTS: ${{ vars.MAVEN_OPTS }} -Pdev
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           ENCRYPTED_C9F9AEDF26B7_KEY: ${{ secrets.ENCRYPTED_C9F9AEDF26B7_KEY }}
@@ -81,8 +81,7 @@ jobs:
         run: |
           openssl aes-256-cbc -K "$ENCRYPTED_C9F9AEDF26B7_KEY" -iv "$ENCRYPTED_C9F9AEDF26B7_IV" -in codesigning.asc.enc -out codesigning.asc -d
           gpg --import --batch codesigning.asc
-          mvn -B clean site package
-          mvn -B deploy -DskipTests
+          npx semantic-release
 
   # dependabot:
   #   needs:
