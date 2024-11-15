@@ -58,8 +58,8 @@ jobs:
         env:
           TESTS_USER_HEXONET: ${{ secrets.TESTS_USER_HEXONET }}
           TESTS_USERPASSWORD_HEXONET: ${{ secrets.TESTS_USERPASSWORD_HEXONET }}
-          TESTS_USER_CNR: ${{ secrets.TESTS_USER_CNR }}
-          TESTS_USERPASSWORD_CNR: ${{ secrets.TESTS_USERPASSWORD_CNR }}
+          TESTS_USER_CNR: ${{ secrets.RTLDEV_MW_CI_USER_CNR }}
+          TESTS_USERPASSWORD_CNR: ${{ secrets.RTLDEV_MW_CI_USERPASSWORD_CNR }}
           TESTS_ROLE_CNR: ${{ secrets.TESTS_ROLE_CNR }}
           TESTS_ROLEPASSWORD_CNR: ${{ secrets.TESTS_ROLEPASSWORD_CNR }}
         run: composer run-script test
