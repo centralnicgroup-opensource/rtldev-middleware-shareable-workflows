@@ -28,6 +28,7 @@ jobs:
           VALIDATE_PHP_PHPSTAN: true
           VALIDATE_BASH: true
           VALIDATE_ALL_CODEBASE: false
+          VALIDATE_PHP_PSALM: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test_matrix:
