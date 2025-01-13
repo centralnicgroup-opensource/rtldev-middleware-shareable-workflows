@@ -21,6 +21,7 @@ jobs:
           FILTER_REGEX_INCLUDE: "/src/*"
           DEFAULT_BRANCH: main
           VALIDATE_TYPESCRIPT_ES: true
+          FIX_TYPESCRIPT_ES: true
           VALIDATE_ALL_CODEBASE: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
