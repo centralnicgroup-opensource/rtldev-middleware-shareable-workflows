@@ -18,7 +18,7 @@ jobs:
       - name: Super Linter Code Base
         uses: github/super-linter/slim@v7
         env:
-          FILTER_REGEX_INCLUDE: "/src/*"
+          FILTER_REGEX_INCLUDE: "/src/**/*.ts"
           DEFAULT_BRANCH: main
           VALIDATE_TYPESCRIPT_ES: true
           FIX_TYPESCRIPT_ES: true
