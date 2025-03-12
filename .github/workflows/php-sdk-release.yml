@@ -38,7 +38,7 @@ jobs:
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
           composer update --no-dev
       - name: PHP Class Documentation
-        run: composer run-script docs
+        run: composer run-script docs && composer run-script generate-uml
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
