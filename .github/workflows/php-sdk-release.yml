@@ -30,8 +30,8 @@ jobs:
       - name: Java JDK @^${{ vars.RTLDEV_MW_CI_JAVA_VERSION }}
         uses: actions/setup-java@v4
         with:
-          java-version: 23
-          distribution: oracle
+          java-version: ${{ vars.RTLDEV_MW_CI_JAVA_VERSION }}
+          distribution: ${{ vars.RTLDEV_MW_CI_JAVA_DISTRO }}
           check-latest: true
       - name: Install Graphviz for UML Diagrams
         run: sudo apt-get install -y graphviz          
