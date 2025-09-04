@@ -41,7 +41,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Python @ ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           check-latest: true
           python-version: ${{ matrix.python-version }}
@@ -78,7 +78,7 @@ jobs:
   #           fetch-depth: 0
   #           persist-credentials: false
   #       - name: Python @ ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
-  #         uses: actions/setup-python@v5
+  #         uses: actions/setup-python@v6
   #         with:
   #           check-latest: true
   #           python-version: ${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}
