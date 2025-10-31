@@ -33,7 +33,7 @@ jobs:
           pip -V
           pip install --upgrade -e .
       - name: Setup NodeJS LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "${{ vars.RTLDEV_MW_CI_NODE_VERSION }}"
           check-latest: true
@@ -77,7 +77,7 @@ jobs:
           pip -V
           pip install --upgrade -e .
       - name: Setup NodeJS LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "${{ vars.RTLDEV_MW_CI_NODE_VERSION }}"
           check-latest: true
@@ -122,7 +122,7 @@ jobs:
           pip -V
           pip install --upgrade -e .
       - name: Setup NodeJS LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "${{ vars.RTLDEV_MW_CI_NODE_VERSION }}"
           check-latest: true
@@ -173,7 +173,7 @@ jobs:
           pip -V
           pip install --upgrade -e .
       - name: Setup NodeJS LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "${{ vars.RTLDEV_MW_CI_NODE_VERSION }}"
           check-latest: true
