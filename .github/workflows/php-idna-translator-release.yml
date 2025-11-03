@@ -40,7 +40,7 @@ jobs:
       - name: PHP Class Documentation
         run: composer run-script docs
       - name: Download coverage report folder from previous workflow
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           pattern: coverage-folder-*
           merge-multiple: true
