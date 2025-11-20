@@ -26,7 +26,6 @@ jobs:
         with:
           node-version: ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
           check-latest: true
-          cache: "npm"
       - name: Java JDK @^${{ vars.RTLDEV_MW_CI_JAVA_VERSION }}
         uses: actions/setup-java@v5
         with:
@@ -42,7 +41,8 @@ jobs:
           coverage: xdebug
       - name: Install Node Dependencies
         run: |
-          npm ci
+          npm i -g pnpm
+          pnpm i --frozen-lockfile
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
       - name: Generate UML Diagram for PHP Classes
         run: composer install && composer run-script generate-uml
@@ -55,4 +55,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
           TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
           COMMIT_SHA: ${{ github.sha }}
-        run: npx semantic-release
+        run: pnpm exec semantic-release
