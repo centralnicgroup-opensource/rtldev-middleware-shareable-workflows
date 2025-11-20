@@ -22,7 +22,9 @@ jobs:
           check-latest: true
           cache: 'npm'
       - name: Install node dependencies
-        run: npm ci
+        run: |
+          npm i -g pnpm
+          pnpm i --frozen-lockfile
       - name: Super Linter Code Base
         uses: github/super-linter/slim@v7
         env:
@@ -59,9 +61,11 @@ jobs:
           check-latest: true
           cache: 'npm'
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm i -g pnpm
+          npm i --frozen-lockfile
       - name: Run test
-        run: npm run test --silent >/dev/null
+        run: pnpm run test --silent >/dev/null
 
   dependabot:
     needs:
