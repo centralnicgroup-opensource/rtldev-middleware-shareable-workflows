@@ -10,7 +10,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
         uses: actions/setup-node@v6
         with:
@@ -33,7 +33,7 @@ jobs:
         node-version: ${{ fromJson(vars.RTLDEV_MW_CI_NODE_MATRIX) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Setup NodeJS ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
@@ -64,7 +64,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
         uses: actions/setup-node@v6
         with:
