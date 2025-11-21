@@ -7,13 +7,6 @@ on:
         type: string
 
 jobs:
-  perl-sdk-tests:
-    if: ${{ contains(inputs.repository, 'perl-sdk') }}
-    uses: ./.github/workflows/perl-sdk-test.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
   python-sdk-tests:
     if: ${{ contains(inputs.repository, 'python-sdk') }}
     uses: ./.github/workflows/python-sdk-test.yml
@@ -61,7 +54,6 @@ jobs:
     name: Auto-merge Dependabot PR
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
     needs:
-      - perl-sdk-tests
       - python-sdk-tests
       - php-sdk-tests
       - java-sdk-tests
