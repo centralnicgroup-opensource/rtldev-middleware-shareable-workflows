@@ -21,11 +21,18 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
         uses: actions/setup-node@v6
         with:
           node-version: ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
           check-latest: true
+          cache: pnpm
+      - name: Install NodeJS Dependencies
+        run: pnpm i --frozen-lockfile
       - name: Java JDK @^${{ vars.RTLDEV_MW_CI_JAVA_VERSION }}
         uses: actions/setup-java@v5
         with:
@@ -39,17 +46,15 @@ jobs:
         with:
           php-version: ${{ vars.RTLDEV_MW_CI_PHP_VERSION }}
           coverage: xdebug
-      - name: Install Node Dependencies
-        run: |
-          npm i -g pnpm
-          pnpm i --frozen-lockfile
-          echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
       - name: Generate UML Diagram for PHP Classes
-        run: composer install && composer run-script generate-uml
-      - name: Install Composer Dependencies
-        run: composer update --no-dev
+        run: | 
+          echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
+          composer install
+          composer run-script generate-uml
       - name: PHP Class Documentation
-        run: composer run-script docs
+        run: |
+          composer update --no-dev
+          composer run-script docs
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}

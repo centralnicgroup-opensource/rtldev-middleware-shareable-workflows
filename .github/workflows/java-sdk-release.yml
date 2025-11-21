@@ -30,12 +30,18 @@ jobs:
           cache: maven
       - name: Maven version
         run: mvn --version
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
         uses: actions/setup-node@v6
         with:
           node-version: ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
           check-latest: true
-          cache: "npm"
+          cache: pnpm
+      - name: Install NodeJS Dependencies
+        run: pnpm i --frozen-lockfile
       - uses: actions/download-artifact@v6
         id: download
         with:
@@ -44,8 +50,6 @@ jobs:
           rm -rf target
           unzip -qq -o target.zip
           rm target.zip
-      - name: Install dependencies
-        run: npm ci
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
@@ -61,4 +65,4 @@ jobs:
         run: |
           openssl aes-256-cbc -K "$ENCRYPTED_C9F9AEDF26B7_KEY" -iv "$ENCRYPTED_C9F9AEDF26B7_IV" -in codesigning.asc.enc -out codesigning.asc -d
           gpg --import --batch codesigning.asc
-          npx semantic-release
+          pnpm exec semantic-release

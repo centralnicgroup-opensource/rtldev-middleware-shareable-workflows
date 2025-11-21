@@ -21,16 +21,21 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
         uses: actions/setup-node@v6
         with:
           node-version: "${{ vars.RTLDEV_MW_CI_NODE_VERSION }}"
           check-latest: true
-      - name: Install dependencies
-        run: npm ci
+          cache: pnpm
+      - name: Install NodeJS Dependencies
+        run: pnpm i --frozen-lockfile
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
           TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
           COMMIT_SHA: ${{ github.sha }}
-        run: npx semantic-release
+        run: pnpm exec semantic-release
