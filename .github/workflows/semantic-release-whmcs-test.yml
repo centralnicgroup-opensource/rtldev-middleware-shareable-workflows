@@ -11,15 +11,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
         uses: actions/setup-node@v6
         with:
           node-version: ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
-          cache: npm
-      - name: Install dependencies
-        run: npm ci
+          check-latest: true
+          cache: pnpm
+      - name: Install NodeJS Dependencies
+        run: pnpm i --frozen-lockfile
       - name: Linting
-        run: npm run lint
+        run: pnpm run lint
 
   test:
     name: 🧪 Testing
@@ -34,13 +39,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
       - name: Setup NodeJS ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-      - name: Install dependencies
-        run: npm ci
+          check-latest: true
+          cache: pnpm
+      - name: Install NodeJS Dependencies
+        run: pnpm i --frozen-lockfile
       - name: Tests
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -53,7 +63,7 @@ jobs:
           PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'false'
           PUPPETEER_FIREFOX_SKIP_DOWNLOAD: 'true'
           DEBUG: ${{ vars.DEBUG }}
-        run: npm run test
+        run: pnpm run test
 
   perform_codeql_analysis:
     name: 🧪 CodeQL Analysis
@@ -65,13 +75,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
         uses: actions/setup-node@v6
         with:
           node-version: ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
-          cache: npm
-      - name: Install dependencies
-        run: npm ci
+          check-latest: true
+          cache: pnpm
+      - name: Install NodeJS Dependencies
+        run: pnpm i --frozen-lockfile
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:

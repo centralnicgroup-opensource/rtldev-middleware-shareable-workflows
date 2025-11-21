@@ -27,19 +27,23 @@ jobs:
         with:
           check-latest: true
           python-version: "${{ vars.RTLDEV_MW_CI_PYTHON_VERSION }}"
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           pip install --upgrade pip build
           pip -V
           pip install --upgrade -e .
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
         uses: actions/setup-node@v6
         with:
           node-version: ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
           check-latest: true
-          cache: "npm"
-      - name: Install dependencies
-        run: npm ci
+          cache: pnpm
+      - name: Install NodeJS Dependencies
+        run: pnpm i --frozen-lockfile
       - name: Download htmlcov folder from previous job
         uses: actions/download-artifact@v6
         with:
@@ -55,4 +59,4 @@ jobs:
           TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
           COMMIT_SHA: ${{ github.sha }}
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
-        run: npx semantic-release
+        run: pnpm exec semantic-release

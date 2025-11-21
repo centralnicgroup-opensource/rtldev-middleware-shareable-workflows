@@ -40,19 +40,25 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
       - name: Setup NodeJS
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          check-latest: true
+          cache: pnpm
+      - name: Install NodeJS Dependencies
+        run: pnpm i --frozen-lockfile
       - name: Build & Validation
         env:
           CNR_TEST_USER: ${{ secrets.RTLDEV_MW_CI_USER_CNR }}
           CNR_TEST_PASSWORD: ${{ secrets.RTLDEV_MW_CI_USERPASSWORD_CNR }}      
         run: |
-          npm ci
-          npm run lint
-          npm run test
+          pnpm run lint
+          pnpm run test
 
   dependabot:
     needs:
