@@ -46,7 +46,7 @@ jobs:
       - name: Install NodeJS Dependencies
         run: pnpm i --frozen-lockfile
       - name: Download htmlcov folder from previous job
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: coverage-folder-*
           merge-multiple: true
