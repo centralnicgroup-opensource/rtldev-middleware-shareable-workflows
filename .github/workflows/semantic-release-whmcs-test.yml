@@ -51,6 +51,8 @@ jobs:
           cache: pnpm
       - name: Install NodeJS Dependencies
         run: pnpm i --frozen-lockfile
+      - name: Install Dependencies for Tests
+        run: sudo "$(which pnpx)" puppeteer browsers install chrome --install-deps
       - name: Tests
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
