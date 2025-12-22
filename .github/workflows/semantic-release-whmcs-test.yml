@@ -65,7 +65,7 @@ jobs:
           PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'false'
           PUPPETEER_FIREFOX_SKIP_DOWNLOAD: 'true'
           DEBUG: ${{ vars.DEBUG }}
-        run: $(which pnpm) run test
+        run: sudo $(which pnpm) run test
 
   perform_codeql_analysis:
     name: 🧪 CodeQL Analysis
