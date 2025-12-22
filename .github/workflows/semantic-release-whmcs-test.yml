@@ -51,21 +51,26 @@ jobs:
           cache: pnpm
       - name: Install NodeJS Dependencies
         run: pnpm i --frozen-lockfile
-      - name: Install Dependencies for Tests
-        run: sudo "$(which pnpx)" puppeteer browsers install chrome --install-deps
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
+        id: setup-chrome
       - name: Tests
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
           GITHUB_REPO: ${{ vars.GH_REPO }}
           WHMCSMP_LOGIN: ${{ secrets.WHMCSMP_LOGIN }}
           WHMCSMP_PASSWORD: ${{ secrets.WHMCSMP_PASSWORD }}
           WHMCSMP_PRODUCTID: ${{ vars.WHMCSMP_PRODUCTID }}
           WHMCSMP_MINVERSION: ${{ vars.WHMCSMP_MINVERSION }}
-          PUPPETEER_CHROME_SKIP_DOWNLOAD: 'false'
-          PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'false'
+          PUPPETEER_EXECUTABLE_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+          PUPPETEER_CHROME_SKIP_DOWNLOAD: 'true'
+          PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'true'
           PUPPETEER_FIREFOX_SKIP_DOWNLOAD: 'true'
+          PUPPETEER_KEEP_OPEN: 'true'
           DEBUG: ${{ vars.DEBUG }}
-        run: pnpm run test
+        run: pnpm test
 
   perform_codeql_analysis:
     name: 🧪 CodeQL Analysis
