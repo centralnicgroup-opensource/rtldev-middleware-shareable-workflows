@@ -35,8 +35,11 @@ jobs:
           cache: pnpm
       - name: Install NodeJS Dependencies
         run: pnpm i --frozen-lockfile
-      - name: Install Dependencies for Tests
-        run: sudo "$(which pnpx)" puppeteer browsers install chrome --install-deps
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
+        id: setup-chrome
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
@@ -44,7 +47,8 @@ jobs:
           NPM_TOKEN: ${{ secrets.RTLDEV_MW_CI_NPM_TOKEN }}
           TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
           COMMIT_SHA: ${{ github.sha }}
-          PUPPETEER_CHROME_SKIP_DOWNLOAD: 'false'
-          PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'false'
+          PUPPETEER_EXECUTABLE_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+          PUPPETEER_CHROME_SKIP_DOWNLOAD: 'true'
+          PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'true'
           PUPPETEER_FIREFOX_SKIP_DOWNLOAD: 'true'
         run: pnpm exec semantic-release
