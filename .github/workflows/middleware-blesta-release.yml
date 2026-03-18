@@ -28,7 +28,7 @@ jobs:
         with:
           php-version: ${{ vars.RTLDEV_MW_CI_PHP_VERSION }}
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v5
         with:
           version: latest
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
