@@ -33,7 +33,7 @@ jobs:
       - name: Maven version
         run: mvn --version
       - name: Setup pnpm
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@v6
         with:
           version: latest
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
