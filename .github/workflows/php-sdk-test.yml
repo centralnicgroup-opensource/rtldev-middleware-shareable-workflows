@@ -26,7 +26,6 @@ jobs:
         uses: github/super-linter/slim@v7
         env:
           FILTER_REGEX_INCLUDE: "/src/*|/tests/*|updateVersion.sh"
-          DEFAULT_BRANCH: master
           VALIDATE_PHP: true
           VALIDATE_PHP_PHPCS: true
           VALIDATE_PHP_PHPSTAN: true
