@@ -14,6 +14,10 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Install PHP ${{ vars.RTLDEV_MW_CI_PHP_VERSION }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ vars.RTLDEV_MW_CI_PHP_VERSION }}
       - name: Install Dependencies::PHP${{ vars.RTLDEV_MW_CI_PHP_VERSION }}
         run: |
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
