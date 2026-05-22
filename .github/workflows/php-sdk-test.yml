@@ -21,7 +21,7 @@ jobs:
       - name: Install Dependencies::PHP${{ vars.RTLDEV_MW_CI_PHP_VERSION }}
         run: |
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
-          composer update
+          composer install --ignore-platform-reqs
       - name: Super Linter Code Base
         uses: github/super-linter/slim@v7
         env:
