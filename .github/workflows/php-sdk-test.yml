@@ -21,18 +21,9 @@ jobs:
       - name: Install Dependencies::PHP${{ vars.RTLDEV_MW_CI_PHP_VERSION }}
         run: |
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
-          composer install --ignore-platform-reqs
-      - name: Super Linter Code Base
-        uses: github/super-linter/slim@v7
-        env:
-          FILTER_REGEX_INCLUDE: "/src/*|/tests/*|updateVersion.sh"
-          VALIDATE_PHP: true
-          VALIDATE_PHP_PHPCS: true
-          VALIDATE_PHP_PHPSTAN: true
-          VALIDATE_PHP_PSALM: true
-          VALIDATE_BASH: true
-          VALIDATE_ALL_CODEBASE: false
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          composer update
+      - name: Lint
+        run: composer lint
 
   test_matrix:
     name: 🧪 Testing
