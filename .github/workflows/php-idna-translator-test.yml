@@ -18,16 +18,8 @@ jobs:
         run: |
           echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
           composer update
-      - name: Super Linter Code Base
-        uses: github/super-linter/slim@v7
-        env:
-          FILTER_REGEX_INCLUDE: "/src/*|/tests/*"
-          DEFAULT_BRANCH: main
-          VALIDATE_PHP: true
-          VALIDATE_PHP_PHPCS: true
-          VALIDATE_PHP_PHPSTAN: true
-          VALIDATE_ALL_CODEBASE: false
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Code Validation
+        run: composer run-script codecheck
 
   test_matrix:
     name: 🧪 Testing
