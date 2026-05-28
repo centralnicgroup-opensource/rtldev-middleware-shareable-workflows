@@ -15,15 +15,18 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: latest
       - name: Setup NodeJS @ ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
         uses: actions/setup-node@v6
         with:
           node-version: ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
           check-latest: true
+          cache: pnpm
       - name: Install node dependencies
-        run: |
-          npm i -g pnpm
-          pnpm i --frozen-lockfile
+        run: pnpm i --frozen-lockfile
       - name: Super Linter Code Base
         uses: github/super-linter/slim@v7
         env:
@@ -53,15 +56,18 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: latest
       - name: Use NodeJS @ ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           check-latest: true
+          cache: pnpm
       - name: Install dependencies
-        run: |
-          npm i -g pnpm
-          npm i --frozen-lockfile
+        run: pnpm i --frozen-lockfile
       - name: Run test
         run: pnpm run test --silent >/dev/null
 
@@ -69,7 +75,7 @@ jobs:
     needs:
       - test_matrix
       - lint
-    if: ${{ github.actor == 'dependabot[bot]' && (success() || needs.lint.result == 'success' || needs.test_matrix.result == 'success') }}
+    if: ${{ github.actor == 'dependabot[bot]' && needs.lint.result == 'success' && needs.test_matrix.result == 'success' }}
     uses: ./.github/workflows/auto-merge-dependabot-pr.yml
     secrets: inherit
     permissions:
