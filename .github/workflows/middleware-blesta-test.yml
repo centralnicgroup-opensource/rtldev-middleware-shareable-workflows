@@ -27,7 +27,7 @@ jobs:
   dependabot:
     needs:
       - lint
-    if: ${{ github.actor == 'dependabot[bot]' && needs.lint.result == 'success' }}
+    if: ${{ needs.lint.result == 'success' }}
     uses: ./.github/workflows/auto-merge-dependabot-pr.yml
     secrets: inherit
     permissions:
