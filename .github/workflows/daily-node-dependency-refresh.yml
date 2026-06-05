@@ -16,7 +16,7 @@ on:
         description: pnpm version used to refresh dependencies.
         required: false
         type: string
-        default: "9"
+        default: "10"
       pull-request-branch:
         description: Branch name used for the dependency refresh pull request.
         required: false
@@ -82,9 +82,10 @@ jobs:
 
       - name: Refresh package.json and pnpm lockfile
         run: |
-          npx npm-check-updates -u --packageManager pnpm --target patch
-          npx npm-check-updates -u --packageManager pnpm --target minor
-          rm -rf node_modules .pnpm-store pnpm-lock.yaml && pnpm update
+          npx --yes npm-check-updates@22 -u --packageManager pnpm --target minor --rejectVersion '/^(?:github:|git(?:\+|:)|file:|link:|workspace:|portal:|patch:|https?:|ssh:)/'
+          rm -rf node_modules .pnpm-store
+          rm -f pnpm-lock.yaml
+          pnpm update --ignore-scripts
 
       - name: Create pull request
         id: create-pr
