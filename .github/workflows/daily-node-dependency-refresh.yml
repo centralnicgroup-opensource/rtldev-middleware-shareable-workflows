@@ -50,7 +50,7 @@ on:
         description: Auto-merge method to use.
         required: false
         type: string
-        default: squash
+        default: rebase
 
 permissions:
   contents: write
