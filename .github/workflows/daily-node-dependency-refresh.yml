@@ -59,10 +59,6 @@ permissions:
   contents: write
   pull-requests: write
 
-concurrency:
-  group: daily-node-dependency-refresh
-  cancel-in-progress: false
-
 jobs:
   refresh-dependencies:
     runs-on: ubuntu-latest
