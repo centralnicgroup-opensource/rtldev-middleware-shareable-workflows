@@ -84,8 +84,7 @@ jobs:
         run: |
           npx npm-check-updates -u --packageManager pnpm --target patch
           npx npm-check-updates -u --packageManager pnpm --target minor
-          rm -rf node_modules .pnpm-store pnpm-lock.yaml
-          pnpm update
+          rm -rf node_modules .pnpm-store pnpm-lock.yaml && pnpm update
 
       - name: Create pull request
         id: create-pr
