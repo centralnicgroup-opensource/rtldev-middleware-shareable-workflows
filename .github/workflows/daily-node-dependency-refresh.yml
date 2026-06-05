@@ -52,7 +52,7 @@ on:
         type: string
         default: squash
     secrets:
-      MERGE_AUTOMATION_TOKEN:
+      RTLDEV_MW_CI_TOKEN:
         required: false
 
 permissions:
@@ -91,7 +91,7 @@ jobs:
         id: create-pr
         uses: peter-evans/create-pull-request@v8
         with:
-          token: ${{ secrets.MERGE_AUTOMATION_TOKEN || github.token }}
+          token: ${{ secrets.RTLDEV_MW_CI_TOKEN || github.token }}
           branch: ${{ inputs.pull-request-branch }}
           base: ${{ inputs.base-ref || github.event.repository.default_branch }}
           delete-branch: true
@@ -103,6 +103,6 @@ jobs:
         if: ${{ inputs.auto-merge && steps.create-pr.outputs.pull-request-number != '' }}
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
-          token: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
+          token: ${{ secrets.RTLDEV_MW_CI_TOKEN || github.token }}
           pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
           merge-method: ${{ inputs.merge-method }}
