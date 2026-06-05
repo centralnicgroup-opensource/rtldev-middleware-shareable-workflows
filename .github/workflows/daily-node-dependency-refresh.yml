@@ -40,17 +40,7 @@ on:
           ## Summary
           - update package.json with npm-check-updates patch and minor releases
           - remove pnpm install state and regenerate pnpm-lock.yaml with pnpm update
-          - enable auto-merge after repository checks pass
-      auto-merge:
-        description: Enable auto-merge for the dependency refresh pull request.
-        required: false
-        type: boolean
-        default: true
-      merge-method:
-        description: Auto-merge method to use.
-        required: false
-        type: string
-        default: rebase
+          - allow the test workflow to enable auto-merge after checks pass
 
 permissions:
   contents: write
@@ -95,11 +85,3 @@ jobs:
           commit-message: ${{ inputs.commit-message }}
           title: ${{ inputs.pull-request-title }}
           body: ${{ inputs.pull-request-body }}
-
-      - name: Enable auto-merge
-        if: ${{ inputs.auto-merge && steps.create-pr.outputs.pull-request-number != '' }}
-        uses: peter-evans/enable-pull-request-automerge@v3
-        with:
-          token: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
-          pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
-          merge-method: ${{ inputs.merge-method }}

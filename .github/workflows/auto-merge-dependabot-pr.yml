@@ -1,24 +1,38 @@
-name: Dependabot auto-merge
+name: Dependabot auto-merge & dependency PR auto-merge
 on:
   workflow_call:
 
 jobs:
   dependabot:
-    name: Auto-merge Dependabot PR
+    name: Auto-merge dependency PR
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
-    if: ${{ github.actor == 'dependabot[bot]' }}
+    if: >-
+      ${{
+        github.actor == 'dependabot[bot]' ||
+        (
+          github.event.pull_request.title == 'chore(deps): refresh node dependencies' &&
+          contains(fromJSON('["KaiSchwarz-cnic", "AsifNawaz-cnic"]'), github.actor)
+        )
+      }}
     permissions:
       contents: write
       pull-requests: write
     steps:
       - name: Dependabot metadata
+        if: ${{ github.actor == 'dependabot[bot]' }}
         id: metadata
         uses: dependabot/fetch-metadata@v3
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Enable auto-merge for Dependabot PRs
         # (fixes, features but not major upgrades!)
-        if: ${{ steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor' }}
+        if: ${{ github.actor == 'dependabot[bot]' && (steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor') }}
+        run: gh pr merge --auto -d -r "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
+      - name: Enable auto-merge for trusted dependency refresh PRs
+        if: ${{ github.actor != 'dependabot[bot]' }}
         run: gh pr merge --auto -d -r "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
