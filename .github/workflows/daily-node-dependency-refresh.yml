@@ -103,6 +103,6 @@ jobs:
         if: ${{ inputs.auto-merge && steps.create-pr.outputs.pull-request-number != '' }}
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
           pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
           merge-method: ${{ inputs.merge-method }}
