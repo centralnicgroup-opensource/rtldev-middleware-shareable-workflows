@@ -7,16 +7,6 @@ on:
         description: Branch to update and use as the pull request base. Defaults to the caller repository default branch.
         required: false
         type: string
-      node-version:
-        description: Node.js version used to refresh dependencies.
-        required: false
-        type: string
-        default: "24"
-      pnpm-version:
-        description: pnpm version used to refresh dependencies.
-        required: false
-        type: string
-        default: "10"
       pull-request-branch:
         description: Branch name used for the dependency refresh pull request.
         required: false
@@ -59,17 +49,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ inputs.node-version }}
+          node-version: ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
           check-latest: true
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: ${{ inputs.pnpm-version }}
+          version: latest
 
       - name: Refresh package.json and pnpm lockfile
         run: |
-          npx --yes npm-check-updates@22 -u --packageManager pnpm --target minor --rejectVersion '/^(?:github:|git(?:\+|:)|file:|link:|workspace:|portal:|patch:|https?:|ssh:)/'
+          npx --yes npm-check-updates -u --packageManager pnpm --target minor --rejectVersion '/^(?:github:|git(?:\+|:)|file:|link:|workspace:|portal:|patch:|https?:|ssh:)/'
           rm -rf node_modules .pnpm-store
           rm -f pnpm-lock.yaml
           pnpm update --ignore-scripts
