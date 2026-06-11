@@ -62,7 +62,7 @@ jobs:
           npx --yes npm-check-updates -u --packageManager pnpm --target minor --rejectVersion '/^(?:github:|git(?:\+|:)|file:|link:|workspace:|portal:|patch:|https?:|ssh:)/'
           rm -rf node_modules .pnpm-store
           rm -f pnpm-lock.yaml
-          pnpm install --frozen-lockfile --reporter append-only && pnpm update --ignore-scripts
+          pnpm clean --lockfile && pnpm install && pnpm update --ignore-scripts
 
       - name: Create pull request
         id: create-pr
