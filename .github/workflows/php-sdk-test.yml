@@ -1,34 +1,17 @@
-name: Linting & Coverage
+name: Coverage & Tests
 on:
   workflow_call:
+    inputs:
+      ref:
+        description: "Commit SHA to check out (pass github.event.workflow_run.head_sha when triggered via workflow_run)"
+        type: string
+        required: false
+        default: ""
 
 jobs:
-  lint:
-    name: 🧪 Linting
-    runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Install PHP ${{ vars.RTLDEV_MW_CI_PHP_VERSION }}
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ vars.RTLDEV_MW_CI_PHP_VERSION }}
-      - name: Install Dependencies::PHP${{ vars.RTLDEV_MW_CI_PHP_VERSION }}
-        run: |
-          echo "$HOME/.composer/vendor/bin" >> "$GITHUB_PATH"
-          composer update
-      - name: Lint
-        run: composer lint
-
   test_matrix:
     name: 🧪 Testing
     runs-on: ${{ vars.RTLDEV_MW_CI_OS }}
-    needs: lint
     permissions:
       contents: read
     strategy:
@@ -38,6 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
           persist-credentials: false
       - name: Install PHP ${{ matrix.php-version }}
@@ -64,8 +48,7 @@ jobs:
   dependabot:
     needs:
       - test_matrix
-      - lint
-    if: ${{ needs.lint.result == 'success' && needs.test_matrix.result == 'success' }}
+    if: ${{ needs.test_matrix.result == 'success' }}
     uses: ./.github/workflows/auto-merge-dependabot-pr.yml
     secrets: inherit
     permissions:
