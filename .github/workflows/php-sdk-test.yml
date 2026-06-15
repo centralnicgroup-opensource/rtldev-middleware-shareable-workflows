@@ -1,12 +1,6 @@
 name: Coverage & Tests
 on:
   workflow_call:
-    inputs:
-      ref:
-        description: "Commit SHA to check out (pass github.event.workflow_run.head_sha when triggered via workflow_run)"
-        type: string
-        required: false
-        default: ""
 
 jobs:
   test_matrix:
@@ -21,7 +15,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.ref }}
           fetch-depth: 0
           persist-credentials: false
       - name: Install PHP ${{ matrix.php-version }}
