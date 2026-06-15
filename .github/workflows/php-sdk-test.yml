@@ -44,6 +44,13 @@ jobs:
           RTLDEV_MW_CI_USER_MONIKER: ${{ secrets.RTLDEV_MW_CI_USER_MONIKER }}
           RTLDEV_MW_CI_USERPASSWORD_MONIKER: ${{ secrets.RTLDEV_MW_CI_USERPASSWORD_MONIKER }}
         run: composer run-script test
+      - name: Upload coverage to Codecov
+        if: strategy.job-index == 0
+        uses: codecov/codecov-action@v4
+        with:
+          files: reports/clover/coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
 
   dependabot:
     needs:
