@@ -19,7 +19,7 @@ jobs:
         php-version: ${{ fromJson(vars.RTLDEV_MW_CI_PHP_MATRIX) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
