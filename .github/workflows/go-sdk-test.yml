@@ -21,7 +21,7 @@ jobs:
       - name: Run Go linter
         uses: golangci/golangci-lint-action@v8
         with:
-          version: v1.64.8
+          version: v2.4.0
           args: --config .github/linters/.golangci.yml ./...
       - name: Install shellcheck
         run: |
