@@ -19,9 +19,9 @@ jobs:
           go-version: "${{ vars.RTLDEV_MW_CI_GOLANG_VERSION }}"
           check-latest: true
       - name: Run Go linter
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v9.2.1
         with:
-          version: v2.4.0
+          version: v2.12.2
           args: --config .github/linters/.golangci.yml ./...
       - name: Install shellcheck
         run: |
