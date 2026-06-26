@@ -18,15 +18,24 @@ jobs:
         with:
           go-version: "${{ vars.RTLDEV_MW_CI_GOLANG_VERSION }}"
           check-latest: true
-      - name: Super Linter Code Base
-        uses: github/super-linter/slim@v7
-        env:
-          FILTER_REGEX_EXCLUDE: "**/*_test.go"
-          DEFAULT_BRANCH: master
-          VALIDATE_GO_MODULES: true
-          VALIDATE_BASH: true
-          VALIDATE_ALL_CODEBASE: false
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Go linter
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v1.64.8
+          args: --config .github/linters/.golangci.yml ./...
+      - name: Install shellcheck
+        run: |
+          if ! command -v shellcheck >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y shellcheck
+          fi
+      - name: Run shell linter
+        run: |
+          find . -name '*.sh' \
+            -not -path './node_modules/*' \
+            -not -path './.git/*' \
+            -not -path './rtldev-middleware-dnscontrol/*' \
+            -print0 | xargs -0 --no-run-if-empty shellcheck
 
   test_matrix:
     name: 🧪 Testing
