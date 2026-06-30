@@ -62,7 +62,7 @@ jobs:
           npx --yes npm-check-updates -u --packageManager pnpm --target minor --rejectVersion '/^(?:github:|git(?:\+|:)|file:|link:|workspace:|portal:|patch:|https?:|ssh:)/'
           rm -rf node_modules .pnpm-store
           rm -f pnpm-lock.yaml
-          pnpm --config.minimumReleaseAge=1440 update --ignore-scripts
+          pnpm --config.minimumReleaseAge=0 update --ignore-scripts
 
       - name: Create pull request
         id: create-pr
