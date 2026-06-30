@@ -17,34 +17,27 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Super Linter Code Base
-        uses: github/super-linter/slim@v7
-        env:
-          DEFAULT_BRANCH: main
-          VALIDATE_GITHUB_ACTIONS: true
-          VALIDATE_MARKDOWN: true
-          VALIDATE_ALL_CODEBASE: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: stable
+          cache: false
+      - name: Lint GitHub Actions
+        run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
+      - name: Lint Markdown
+        run: |
+          mapfile -d '' markdown_files < <(git ls-files -z -- '*.md' '*.markdown')
+          if ((${#markdown_files[@]} == 0)); then
+            echo "No Markdown files to lint."
+            exit 0
+          fi
+          npx --yes markdownlint-cli2@0.18.1 "${markdown_files[@]}"
 
   dependabot:
-    if: ${{ github.actor == 'dependabot[bot]' }}
-    name: Auto-merge Dependabot PR
-    runs-on: ubuntu-latest
     needs:
       - tests
+    uses: ./.github/workflows/auto-merge-dependabot-pr.yml
+    secrets: inherit
     permissions:
       contents: write
       pull-requests: write
-    steps:
-      - name: Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v3
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Enable auto-merge for Dependabot PRs
-        # (fixes, features but not major upgrades!)
-        if: ${{ steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor' }}
-        run: gh pr merge --auto -d -r "$PR_URL"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
