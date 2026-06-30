@@ -27,16 +27,8 @@ jobs:
           cache: pnpm
       - name: Install node dependencies
         run: pnpm i --frozen-lockfile
-      - name: Super Linter Code Base
-        uses: github/super-linter/slim@v7
-        env:
-          FILTER_REGEX_INCLUDE: '.*.js|*.js|/scripts/*|/src/*|/test/*'
-          DEFAULT_BRANCH: master
-          VALIDATE_JAVASCRIPT_ES: true
-          VALIDATE_TYPESCRIPT_ES: true
-          VALIDATE_BASH: true
-          VALIDATE_ALL_CODEBASE: false
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Linting
+        run: pnpm run lint
 
   test_matrix:
     strategy:
