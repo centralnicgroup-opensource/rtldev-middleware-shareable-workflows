@@ -44,7 +44,7 @@ jobs:
           check-latest: true
           cache: pnpm
       - name: Install NodeJS Dependencies
-        run: pnpm i --frozen-lockfile --config.minimumReleaseAge=0
+        run: pnpm i --frozen-lockfile
       - name: Download htmlcov folder from previous job
         uses: actions/download-artifact@v8
         with:
