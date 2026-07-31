@@ -95,11 +95,11 @@ jobs:
       - name: Install NodeJS Dependencies
         run: pnpm i --frozen-lockfile
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
+        uses: github/codeql-action/init@v4.37.3
         with:
           languages: javascript
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4
+        uses: github/codeql-action/analyze@v4.37.3
 
   dependabot:
     needs:
