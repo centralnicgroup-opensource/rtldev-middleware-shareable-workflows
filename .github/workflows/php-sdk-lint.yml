@@ -1,6 +1,16 @@
 name: Lint & Security
 on:
   workflow_call:
+    inputs:
+      prettier:
+        description: >-
+          Run the Prettier formatting check. Opt-in, because this is the only job
+          that needs the caller to bring a Node toolchain: it requires a committed
+          pnpm-lock.yaml, prettier in devDependencies, and a `prettier` composer
+          script. Left at false, the job is skipped and the caller is unaffected.
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   composer-audit:
@@ -54,6 +64,46 @@ jobs:
       - uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: .devcontainer/Dockerfile
+
+  prettier:
+    name: "Lint: Prettier"
+    if: ${{ inputs.prettier }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ vars.RTLDEV_MW_CI_PHP_VERSION }}
+          coverage: none
+      # The prettier script itself only shells out to Node, so this install is not
+      # strictly required — it is here so the job keeps the identical shape to the
+      # six sibling jobs, and so a caller whose prettier script grows a PHP-side
+      # dependency does not have to change this workflow to get it.
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - uses: pnpm/action-setup@v6
+        with:
+          version: latest
+      - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
+          check-latest: true
+          cache: pnpm
+      # --frozen-lockfile so the run uses the prettier pinned in pnpm-lock.yaml.
+      # Load-bearing, not hygiene: prettier's output changes between minors, so a
+      # floating install produces failures that cannot be reproduced locally.
+      - name: Install NodeJS dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Report the Prettier version under test
+        run: pnpm exec prettier --version
+      # Deliberately `composer prettier` rather than a raw prettier call: the
+      # caller keeps ownership of the arguments and .prettierignore rules, and the
+      # job matches the one-composer-script shape of every other job here.
+      - name: Prettier
+        run: composer prettier
 
   shellcheck:
     name: "Lint: ShellCheck"
