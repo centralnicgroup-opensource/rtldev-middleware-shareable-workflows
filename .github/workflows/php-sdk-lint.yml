@@ -83,7 +83,7 @@ jobs:
       # dependency does not have to change this workflow to get it.
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@v6.0.9
         with:
           version: latest
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
