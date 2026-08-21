@@ -35,12 +35,17 @@ jobs:
           cache: pnpm
       - name: Install NodeJS Dependencies
         run: pnpm i --frozen-lockfile
+      - name: Generate API documentation
+        # Split from the Release step deliberately: a docs-generation failure
+        # (e.g. a toolchain/peer-dependency mismatch) must never block a
+        # release. continue-on-error keeps the failure visible in the run
+        # summary instead of silently swallowing it (as `|| true` would).
+        continue-on-error: true
+        run: pnpm run documentation
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
           NPM_TOKEN: ${{ secrets.RTLDEV_MW_CI_NPM_TOKEN }}
           TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
           COMMIT_SHA: ${{ github.sha }}
-        run: |
-          pnpm run documentation
-          pnpm exec semantic-release
+        run: pnpm exec semantic-release
