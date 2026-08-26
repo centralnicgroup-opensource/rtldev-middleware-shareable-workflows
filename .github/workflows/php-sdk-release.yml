@@ -87,4 +87,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
           TEAMS_NOTIFICATION_URI: ${{ secrets.RTLDEV_MW_CI_NOTIFICATION_URI }}
           COMMIT_SHA: ${{ github.sha }}
+          # TEMPORARY — remove after the first release of RSRMID-2994 has been checked.
+          # Logs which auth path get-git-auth-url.js chose: "SSH key auth successful."
+          # means the deploy key was used, "SSH key auth failed, falling back to https."
+          # means it was not. Scoped to that one namespace, so nothing else is verbose.
+          DEBUG: semantic-release:get-git-auth-url
         run: pnpm exec semantic-release
