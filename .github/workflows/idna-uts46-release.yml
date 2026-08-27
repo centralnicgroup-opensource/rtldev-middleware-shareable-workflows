@@ -32,6 +32,31 @@ jobs:
         run: |
           npm i -g pnpm
           pnpm i --frozen-lockfile
+      # @semantic-release/git pushes the release commit straight to the default branch,
+      # which no pull request can carry — it happens after the version is decided. The
+      # ruleset therefore names DeployKey as its only bypass actor, and this is the key:
+      # per-repository, write-enabled, so a leak costs one repository rather than every
+      # repository a personal access token can reach.
+      #
+      # The key goes through env, not through ${{ }} interpolated into the script body:
+      # a multi-line value breaks there, and the body is a shell injection surface.
+      #
+      # Fails on an empty secret rather than letting it through. semantic-release falls
+      # back to HTTPS when SSH auth fails and does not re-verify, so an unset secret
+      # would surface as a rejected push at the very end of the release, after the
+      # version has already been chosen and the tag written.
+      - name: Configure SSH for the release push
+        env:
+          SSH_KEY: ${{ secrets.RTLDEV_MW_CI_SSH_KEY }}
+        run: |
+          if [ -z "$SSH_KEY" ]; then
+            echo "::error::RTLDEV_MW_CI_SSH_KEY is not set — the release push has no identity"
+            exit 1
+          fi
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
