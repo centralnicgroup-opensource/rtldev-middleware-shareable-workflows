@@ -1,10 +1,27 @@
 name: Release
 on:
   workflow_call:
+    inputs:
+      pnpm-version:
+        description: >-
+          Which pnpm to install. The default installs whatever pnpm released most
+          recently; pass "" to make the action resolve the version from the
+          caller's package.json instead, where `devEngines.packageManager` names
+          the range this policy allows. Passing a version here as well as
+          declaring one there is a hard error in the action, so this input exists
+          to let each repository move across on its own commit — once every caller
+          passes "", the input and this default go away. (RSRMID-3008)
+        type: string
+        required: false
+        default: latest
 
 jobs:
   tests:
+    # Forwarded, so the nested test job resolves pnpm the same way this one does —
+    # otherwise a caller that resolves it from its manifest still gets `latest` here.
     uses: ./.github/workflows/idna-uts46-test.yml
+    with:
+      pnpm-version: ${{ inputs.pnpm-version }}
     secrets: inherit
 
   release:
@@ -23,15 +40,26 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      # `npm i -g pnpm` used to do this, which was the only place in this repository
+      # that reached for npm to get pnpm — an unpinned install of whatever pnpm was
+      # newest, on a job that cuts releases. action-setup is what every other workflow
+      # here uses, it honours what the caller's manifest declares, and it lets
+      # setup-node cache the store. (RSRMID-3008)
+      #
+      # It has to run before setup-node, which needs pnpm on PATH to resolve
+      # `cache: pnpm`.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6.0.9
+        with:
+          version: ${{ inputs.pnpm-version }}
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
         uses: actions/setup-node@v7
         with:
           node-version: ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
           check-latest: true
+          cache: pnpm
       - name: Install dependencies
-        run: |
-          npm i -g pnpm
-          pnpm i --frozen-lockfile
+        run: pnpm i --frozen-lockfile
       # @semantic-release/git pushes the release commit straight to the default branch,
       # which no pull request can carry — it happens after the version is decided. The
       # ruleset therefore names DeployKey as its only bypass actor, and this is the key:
