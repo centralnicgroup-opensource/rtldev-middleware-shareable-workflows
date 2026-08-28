@@ -1,6 +1,19 @@
 name: Release
 on:
   workflow_call:
+    inputs:
+      pnpm-version:
+        description: >-
+          Which pnpm to install. The default installs whatever pnpm released most
+          recently; pass "" to make the action resolve the version from the
+          caller's package.json instead, where `devEngines.packageManager` names
+          the range this policy allows. Passing a version here as well as
+          declaring one there is a hard error in the action, so this input exists
+          to let each repository move across on its own commit — once every caller
+          passes "", the input and this default go away. (RSRMID-3008)
+        type: string
+        required: false
+        default: latest
 
 jobs:
   tests:
@@ -26,7 +39,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.0.9
         with:
-          version: latest
+          version: ${{ inputs.pnpm-version }}
       - name: Setup NodeJS ${{ vars.RTLDEV_MW_CI_NODE_VERSION }}
         uses: actions/setup-node@v7
         with:
