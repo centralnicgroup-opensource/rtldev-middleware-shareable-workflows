@@ -25,6 +25,14 @@ jobs:
           cache: false
       - name: Lint GitHub Actions
         run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
+      # This repository carries no package.json, so there is no
+      # `devEngines.packageManager` for the action to resolve and the version has to be
+      # named here. It is the policy's major rather than an exact version, so a pnpm
+      # release needs no commit. (RSRMID-3008)
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6.0.9
+        with:
+          version: 11
       - name: Lint Markdown
         run: |
           mapfile -d '' markdown_files < <(git ls-files -z -- '*.md' '*.markdown')
@@ -32,7 +40,7 @@ jobs:
             echo "No Markdown files to lint."
             exit 0
           fi
-          npx --yes markdownlint-cli2@0.18.1 "${markdown_files[@]}"
+          pnpm dlx markdownlint-cli2@0.18.1 "${markdown_files[@]}"
 
   dependabot:
     needs:

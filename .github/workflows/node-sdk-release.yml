@@ -4,16 +4,15 @@ on:
     inputs:
       pnpm-version:
         description: >-
-          Which pnpm to install. The default installs whatever pnpm released most
-          recently; pass "" to make the action resolve the version from the
-          caller's package.json instead, where `devEngines.packageManager` names
-          the range this policy allows. Passing a version here as well as
-          declaring one there is a hard error in the action, so this input exists
-          to let each repository move across on its own commit — once every caller
-          passes "", the input and this default go away. (RSRMID-3008)
+          Which pnpm to install. Empty by default, so pnpm/action-setup resolves the
+          version from the calling repository's package.json, where
+          `devEngines.packageManager` names the range the Node toolchain policy allows.
+          Pass an explicit version only to override that, and only from a repository
+          whose manifest declares none — the action treats a version here plus a
+          declaration there as a hard error. (RSRMID-3008)
         type: string
         required: false
-        default: latest
+        default: ""
 
 jobs:
   tests:
