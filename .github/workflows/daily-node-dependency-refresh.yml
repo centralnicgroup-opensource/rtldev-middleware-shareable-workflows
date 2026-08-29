@@ -68,12 +68,33 @@ jobs:
         with:
           version: ${{ inputs.pnpm-version }}
 
+      # NEITHER COMMAND BELOW PASSES A RELEASE-AGE THRESHOLD, DELIBERATELY.
+      #
+      # This step used to resolve with `pnpm --config.minimumReleaseAge=30` — thirty
+      # minutes — while every other install in every repository applied pnpm's default of
+      # 24 hours. So the refresh committed lockfiles that every consumer then rejected
+      # with ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION for up to a day, and any release
+      # triggered in that window failed through no fault of the change that triggered it.
+      # The offending packages rotated with each run, which made a standing conflict
+      # between two jobs look like a transient. (RSRMID-3018)
+      #
+      # Correcting the number here would have left two thresholds for somebody to keep
+      # equal. Instead both tools read the calling repository's own pnpm-workspace.yaml:
+      # pnpm natively, and npm-check-updates via `--packageManager pnpm`, which consults
+      # `minimumReleaseAge` when no `--cooldown` is given. That makes the producer and the
+      # consumer of the lockfile the same threshold by construction — and since the
+      # constraint is "published before now minus the threshold", and now only ever moves
+      # forward, a lockfile this job resolves can never be too fresh for a later install.
+      #
+      # ncu needs the threshold as much as pnpm does: it rewrites the ranges in
+      # package.json, so without it a range floor would be raised to a version pnpm is
+      # then forbidden to install, and the refresh would fail on its own output.
       - name: Refresh package.json and pnpm lockfile
         run: |
           pnpm dlx npm-check-updates -u --packageManager pnpm --target minor --rejectVersion '/^(?:github:|git(?:\+|:)|file:|link:|workspace:|portal:|patch:|https?:|ssh:)/'
           rm -rf node_modules .pnpm-store
           rm -f pnpm-lock.yaml
-          pnpm --config.minimumReleaseAge=30 update --ignore-scripts
+          pnpm update --ignore-scripts
 
       - name: Create pull request
         id: create-pr
