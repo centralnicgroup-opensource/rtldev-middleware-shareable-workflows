@@ -30,7 +30,7 @@ jobs:
       # named here. It is the policy's major rather than an exact version, so a pnpm
       # release needs no commit. (RSRMID-3008)
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6.0.9
+        uses: pnpm/action-setup@v6.0.10
         with:
           version: 11
       - name: Lint Markdown
