@@ -45,6 +45,37 @@ jobs:
           TEAMS_NOTIFICATION_URI: ${{ secrets.TEAMS_NOTIFICATION_URI }}
         run: pnpm run test:teams
 
+      # The whmcs-marketplace plugin drives the Marketplace listing forms in a
+      # real browser, so its integration test needs one. puppeteer's own Chrome
+      # download is deliberately not enabled for this package (pnpm-workspace.yaml
+      # `allowBuilds: puppeteer: false`), because only this step needs a browser.
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
+        id: setup-chrome
+
+      # Needs a browser but no credentials, and publishes nothing: it checks the
+      # vendored cookie extension really loads and that the live Marketplace
+      # login form still has the selectors the plugin drives.
+      - name: WHMCS Marketplace browser test
+        env:
+          PUPPETEER_EXECUTABLE_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+        run: pnpm run test:browser
+
+      # Publishes a throwaway version to the product named by WHMCSMP_PRODUCTID
+      # and removes it again, so that variable must point at a listing nobody
+      # depends on. Skips itself when the credentials are not available.
+      - name: WHMCS Marketplace integration test
+        env:
+          WHMCSMP_LOGIN: ${{ secrets.WHMCSMP_LOGIN }}
+          WHMCSMP_PASSWORD: ${{ secrets.WHMCSMP_PASSWORD }}
+          WHMCSMP_PRODUCTID: ${{ vars.WHMCSMP_PRODUCTID }}
+          WHMCSMP_MINVERSION: ${{ vars.WHMCSMP_MINVERSION }}
+          WHMCSMP_TEST_PRODUCTID: ${{ vars.WHMCSMP_TEST_PRODUCTID }}
+          PUPPETEER_EXECUTABLE_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+        run: pnpm run test:whmcs
+
       - name: Lint package
         run: pnpm run lint
 
