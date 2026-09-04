@@ -13,6 +13,18 @@ on:
         type: string
         required: false
         default: ""
+      auto-merge:
+        description: >-
+          Whether this workflow merges a passing dependency PR itself. True by default,
+          which suits a repository whose PR checks all live here: lint and tests pass and
+          the merge follows. Pass false from a repository that runs further checks of its
+          own — it then calls auto-merge-dependabot-pr.yml downstream of everything, and
+          this workflow stops at reporting. Merging here regardless would defeat that,
+          since the merge would land before the caller's other checks reported.
+          (RSRMID-3047)
+        type: boolean
+        required: false
+        default: true
 
 jobs:
   lint:
@@ -79,7 +91,7 @@ jobs:
     needs:
       - test_matrix
       - lint
-    if: ${{ needs.lint.result == 'success' && needs.test_matrix.result == 'success' }}
+    if: ${{ inputs.auto-merge && needs.lint.result == 'success' && needs.test_matrix.result == 'success' }}
     uses: ./.github/workflows/auto-merge-dependabot-pr.yml
     secrets: inherit
     permissions:
