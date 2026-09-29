@@ -2,6 +2,19 @@ name: Dependabot auto-merge & dependency PR auto-merge
 on:
   workflow_call:
 
+# Auto-merge is enabled with RTLDEV_MW_CI_TOKEN, not GITHUB_TOKEN, and that is load-bearing.
+# GitHub performs the merge as whoever enabled auto-merge, and a push made by GITHUB_TOKEN
+# starts no workflow run — so with GITHUB_TOKEN the push-triggered release would never run.
+# Several repositories commit production bumps as `fix(deps)` (go-sdk, python-sdk,
+# semantic-release-plugins), and those releases come from exactly that run: go-sdk v5.0.21
+# shipped a golang.org/x/net bump that way. (RSRMID-3099)
+#
+# The PAT therefore stays, and it exists four times: a Dependabot-triggered run reads the
+# organisation's Dependabot secrets, every other run its Actions secrets, in each of the two
+# organisations. A stale copy used to fail with a 401 visible only in this job's log while
+# every real check on the PR stayed green (RSRMID-3086), so the token is checked first and
+# any failure is reported on the PR itself.
+
 jobs:
   dependabot:
     name: Auto-merge dependency PR
@@ -17,6 +30,9 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    env:
+      PR_URL: ${{ github.event.pull_request.html_url }}
+      SECRET_STORE: ${{ github.actor == 'dependabot[bot]' && 'Dependabot' || 'Actions' }}
     steps:
       - name: Dependabot metadata
         if: ${{ github.actor == 'dependabot[bot]' }}
@@ -24,16 +40,76 @@ jobs:
         uses: dependabot/fetch-metadata@v3
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Enable auto-merge for Dependabot PRs
-        # (fixes, features but not major upgrades!)
-        if: ${{ github.actor == 'dependabot[bot]' && (steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor') }}
+      - name: Check RTLDEV_MW_CI_TOKEN
+        # Only where a merge follows: a major bump is left for a person, and failing its
+        # run over the token would announce an auto-merge that was never going to happen.
+        if: ${{ github.actor != 'dependabot[bot]' || steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor' }}
+        id: token
+        env:
+          CI_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
+        run: |
+          secret="the ${SECRET_STORE} secret RTLDEV_MW_CI_TOKEN of ${GITHUB_REPOSITORY_OWNER}"
+          fail() {
+            echo "reason=$1" >>"$GITHUB_OUTPUT"
+            echo "::error title=RTLDEV_MW_CI_TOKEN unusable::$1"
+            exit 1
+          }
+          if [[ -z $CI_TOKEN ]]; then
+            fail "${secret} is empty or not set."
+          fi
+          # A repository probe rather than /user: a token whose resource owner is the other
+          # organisation answers 404 here on a private repository. On a public one any token
+          # can read it, so that case is only caught by the merge step failing below.
+          status=$(curl -sS -o /dev/null -D headers.txt -w '%{http_code}' \
+            -H "Authorization: Bearer ${CI_TOKEN}" \
+            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}") || fail "could not reach ${GITHUB_API_URL} to check ${secret}."
+          case $status in
+            200) ;;
+            401) fail "${secret} was rejected (HTTP 401): it has expired or been revoked." ;;
+            404) fail "${secret} cannot see ${GITHUB_REPOSITORY} (HTTP 404): it is probably the other organisation's token." ;;
+            *) fail "checking ${secret} returned HTTP ${status}." ;;
+          esac
+          expiry=$(sed -n 's/^github-authentication-token-expiration: *//Ip' headers.txt | tr -d '\r')
+          if [[ -z $expiry ]]; then
+            echo "${secret} does not expire." >>"$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "${secret} expires ${expiry}." >>"$GITHUB_STEP_SUMMARY"
+          days=$(( ($(date -d "$expiry" +%s) - $(date +%s)) / 86400 ))
+          if (( days < 14 )); then
+            echo "::warning title=RTLDEV_MW_CI_TOKEN expires in ${days} days::${secret} expires ${expiry}. Rotate all four copies: the Actions and the Dependabot secret, in both organisations."
+          fi
+      - name: Enable auto-merge
+        # Dependabot: fixes and features, never a major upgrade. Otherwise the trusted
+        # nightly refresh PR the job condition already admitted.
+        if: ${{ steps.token.outcome == 'success' }}
+        id: merge
         run: gh pr merge --auto -d -r "$PR_URL"
         env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
-      - name: Enable auto-merge for trusted dependency refresh PRs
-        if: ${{ github.actor != 'dependabot[bot]' }}
-        run: gh pr merge --auto -d -r "$PR_URL"
+      - name: Report the failure on the pull request
+        # GITHUB_TOKEN, deliberately: this is the one credential here that cannot be stale.
+        # One comment per PR, updated in place, so a rebase does not stack up duplicates.
+        if: ${{ failure() && (steps.token.outcome == 'failure' || steps.merge.outcome == 'failure') }}
         env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.RTLDEV_MW_CI_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REASON: ${{ steps.token.outputs.reason }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          marker="<!-- rtldev-mw-auto-merge-failed -->"
+          body="${marker}
+          **Auto-merge could not be enabled on this pull request.** It will not merge by itself.
+
+          ${REASON:-The merge step failed; the job log has the error.}
+
+          Run: ${RUN_URL}
+
+          \`RTLDEV_MW_CI_TOKEN\` exists four times — an Actions and a Dependabot secret, in each of the two organisations — and this run read the **${SECRET_STORE}** one. Once it is fixed, re-run the job or merge by hand."
+          id=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"${marker}\"))) | .id" | tail -n 1)
+          if [[ -n $id ]]; then
+            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${id}" -f body="$body" >/dev/null
+          else
+            gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" -f body="$body" >/dev/null
+          fi
