@@ -65,9 +65,11 @@ from a caller.
 - **Commit messages:** Conventional Commits with **mandatory scope** —
   `<type>(<scope>): <summary>`, scoped by the workflow changed
   (e.g. `fix(go-sdk-test): …`). Never append a `Co-Authored-By:` trailer.
-- **Branch creation:** `git checkout main && git pull --ff-only` before
-  `git checkout -b` — never branch from a stale local default branch or
-  another feature branch.
+- **Branch creation:** before creating a branch, and again after any PR merges,
+  run `git checkout main && git pull --ff-only` first — it brings in the merged
+  commits and their release tags. Never branch from a stale local `main`, from
+  `origin/main` (it becomes the new branch's upstream) or from another feature
+  branch.
 - **Branch naming:** prefix with the Jira issue ID —
   `RSRMID-1234-short-description`.
 - **Pull requests:** include the Jira issue link in the description; after
