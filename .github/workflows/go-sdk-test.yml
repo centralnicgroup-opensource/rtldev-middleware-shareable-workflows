@@ -30,7 +30,10 @@ jobs:
           # new Go minor therefore needs a golangci-lint release built with that minor:
           # v2.13.0 added go1.27 support, where v2.12.2 was built with go1.26 and panicked
           # on the go1.27 standard library. (RSRMID-3071)
-          version: v2.13.2
+          # check-latest makes a Go patch release enough as well: go1.27.2 raised the
+          # export data version to 5, which v2.13.2 rejects; v2.14.0 reads it through
+          # golang.org/x/tools 0.50.0. (RSRMID-3125)
+          version: v2.14.0
           args: --config .github/linters/.golangci.yml ./...
       - name: Install shellcheck
         run: |
